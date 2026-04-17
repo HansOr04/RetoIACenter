@@ -1,0 +1,136 @@
+stages:
+  - build
+  - test
+  - coverage
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2"
+  PNPM_STORE_DIR: "$CI_PROJECT_DIR/.pnpm-store"
+
+# ─── Cache ───────────────────────────────────────────────────────────────────
+.maven-cache: &maven-cache
+  cache:
+    key: "$CI_COMMIT_REF_SLUG-maven"
+    paths:
+      - .m2/
+
+.pnpm-cache: &pnpm-cache
+  cache:
+    key: "$CI_COMMIT_REF_SLUG-pnpm"
+    paths:
+      - .pnpm-store/
+
+# ─── Build ────────────────────────────────────────────────────────────────────
+build:backend:
+  stage: build
+  image: eclipse-temurin:21-jdk-alpine
+  <<: *maven-cache
+  script:
+    - cd apps/api
+    - ./mvnw clean package -DskipTests -q
+  artifacts:
+    paths:
+      - apps/api/target/*.jar
+    expire_in: 1 hour
+
+build:frontend:
+  stage: build
+  image: node:20-alpine
+  <<: *pnpm-cache
+  before_script:
+    - corepack enable pnpm
+    - pnpm install --frozen-lockfile
+  script:
+    - pnpm --filter @reto/web build
+  artifacts:
+    paths:
+      - apps/web/.next/
+    expire_in: 1 hour
+
+build:core-stub:
+  stage: build
+  image: node:20-alpine
+  <<: *pnpm-cache
+  before_script:
+    - corepack enable pnpm
+    - pnpm install --frozen-lockfile
+  script:
+    - pnpm --filter @reto/core-stub build
+
+# ─── Test ─────────────────────────────────────────────────────────────────────
+test:backend:
+  stage: test
+  image: eclipse-temurin:21-jdk-alpine
+  <<: *maven-cache
+  services:
+    - name: postgres:16-alpine
+      alias: postgres
+      variables:
+        POSTGRES_DB: cotizador_test
+        POSTGRES_USER: cotizador
+        POSTGRES_PASSWORD: cotizador
+  variables:
+    DB_URL: "jdbc:postgresql://postgres:5432/cotizador_test"
+    DB_USER: cotizador
+    DB_PASS: cotizador
+  script:
+    - cd apps/api
+    - ./mvnw test -q
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - apps/api/target/surefire-reports/TEST-*.xml
+    paths:
+      - apps/api/target/site/jacoco/
+    expire_in: 7 days
+
+test:frontend:
+  stage: test
+  image: node:20-alpine
+  <<: *pnpm-cache
+  before_script:
+    - corepack enable pnpm
+    - pnpm install --frozen-lockfile
+  script:
+    - pnpm --filter @reto/web test:coverage
+  artifacts:
+    when: always
+    paths:
+      - apps/web/coverage/
+    expire_in: 7 days
+
+# ─── Coverage ─────────────────────────────────────────────────────────────────
+coverage:backend:
+  stage: coverage
+  image: eclipse-temurin:21-jdk-alpine
+  <<: *maven-cache
+  needs: [test:backend]
+  script:
+    - echo "JaCoCo report available in apps/api/target/site/jacoco/"
+    - cat apps/api/target/site/jacoco/index.html | grep -o 'Total[^%]*%' | head -1 || true
+  coverage: '/Total.*?([0-9]{1,3})%/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: apps/api/target/site/jacoco/jacoco.xml
+  only:
+    - main
+    - merge_requests
+
+coverage:frontend:
+  stage: coverage
+  image: node:20-alpine
+  needs: [test:frontend]
+  script:
+    - echo "Jest coverage report available in apps/web/coverage/"
+  coverage: '/Statements\s*:\s*([0-9.]+)%/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: apps/web/coverage/cobertura-coverage.xml
+  only:
+    - main
+    - merge_requests
