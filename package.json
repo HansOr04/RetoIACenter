@@ -1,0 +1,13 @@
+{
+  "name": "reto-ia-center",
+  "private": true,
+  "packageManager": "pnpm@9.0.0",
+  "scripts": {
+    "dev:web": "pnpm --filter @reto/web dev",
+    "dev:core": "pnpm --filter @reto/core-stub dev",
+    "dev:api": "cd apps/api && ./mvnw spring-boot:run -Dspring-boot.run.profiles=local",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint"
+  }
+}
