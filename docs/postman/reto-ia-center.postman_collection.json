@@ -1,0 +1,119 @@
+{
+  "info": {
+    "name": "Reto IA Center · Cotizador de Daños",
+    "description": "Colección de endpoints del backend (plataforma-danos-back) y core-stub.",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl",    "value": "http://localhost:8080/api/v1" },
+    { "key": "coreUrl",   "value": "http://localhost:4000/v1" },
+    { "key": "folioId",   "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Backend — Folios",
+      "item": [
+        {
+          "name": "POST /folios — Crear folio",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/folios",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rfcContratante\": \"SOFK900101XXX\",\n  \"agentId\": \"AGT-001\",\n  \"businessLineId\": \"BL-DANOS\"\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /folios — Listar folios",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/folios"
+          }
+        },
+        {
+          "name": "GET /folios/:id — Obtener folio",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/folios/{{folioId}}"
+          }
+        },
+        {
+          "name": "PUT /folios/:id/datos-generales",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/folios/{{folioId}}/datos-generales",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rfcContratante\": \"SOFK900101XXX\",\n  \"nombreContratante\": \"Sofka Technologies S.A.S.\",\n  \"agentId\": \"AGT-001\",\n  \"businessLineId\": \"BL-DANOS\",\n  \"version\": 0\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /folios/:id/calcular",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/folios/{{folioId}}/calcular"
+          }
+        },
+        {
+          "name": "PATCH /folios/:id/estado",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/folios/{{folioId}}/estado",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"EMITIDO\",\n  \"version\": 1\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Backend — Ubicaciones",
+      "item": [
+        {
+          "name": "POST /folios/:id/ubicaciones",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/folios/{{folioId}}/ubicaciones",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"descripcion\": \"Bodega principal\",\n  \"codigoPostal\": \"170101\",\n  \"direccion\": \"Av. Shyris N36-188\",\n  \"tipoConstruccion\": \"SOLIDA\",\n  \"valorConstruccion\": 150000,\n  \"valorContenidos\": 50000\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Core Stub",
+      "item": [
+        {
+          "name": "GET /subscribers",
+          "request": { "method": "GET", "url": "{{coreUrl}}/subscribers" }
+        },
+        {
+          "name": "GET /agents",
+          "request": { "method": "GET", "url": "{{coreUrl}}/agents" }
+        },
+        {
+          "name": "GET /zip-codes/:cp",
+          "request": { "method": "GET", "url": "{{coreUrl}}/zip-codes/170101" }
+        },
+        {
+          "name": "GET /catalogs/guarantees",
+          "request": { "method": "GET", "url": "{{coreUrl}}/catalogs/guarantees" }
+        },
+        {
+          "name": "GET /tariffs/incendio",
+          "request": { "method": "GET", "url": "{{coreUrl}}/tariffs/incendio" }
+        }
+      ]
+    }
+  ]
+}
