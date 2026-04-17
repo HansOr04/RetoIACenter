@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cotizador
+    username: cotizador
+    password: cotizador
+  jpa:
+    show-sql: true
+
+core:
+  base-url: http://localhost:4000
+
+logging:
+  level:
+    com.sofka.cotizador: DEBUG
+    org.springframework.web: DEBUG
