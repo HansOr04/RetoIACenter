@@ -1,0 +1,32 @@
+user_name: Hans
+user_role: Full Stack + QA Engineer
+seniority_level: Mid
+communication_language: Español
+project: reto-ia-center
+organization: Sofka Technologies · AI Center
+challenge: Reto IA Center 2026
+
+stack:
+  backend: [Java 21, Spring Boot 3.2, PostgreSQL 16, Flyway, MapStruct, Resilience4j]
+  frontend: [Next.js 15, TypeScript, TailwindCSS 4, shadcn/ui, Zustand, TanStack Query]
+  core_stub: [Node.js 20, Express, TypeScript]
+  testing: [JUnit 5, Mockito, Testcontainers, Jest, RTL, Karate DSL, Playwright, k6]
+
+output_base: specs/output/
+guidelines_base: specs/guidelines/
+features_base: specs/features/
+
+agents_enabled:
+  - spec
+  - backend
+  - frontend
+  - qa
+
+skills_enabled:
+  - skill_backend_clean-code-reviewer
+  - skill_backend_integration-test-generator
+  - skill_frontend_component-reviewer
+  - skill_frontend_ui-test-generator
+  - skill_qa_test-strategy-planner
+  - skill_qa_gherkin-case-generator
+  - skill_qa_automation-flow-proposer
