@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.sofka</groupId>
+    <artifactId>cotizador-integration-tests</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>cotizador-integration-tests</name>
+    <description>Pruebas de integración con Karate DSL — Reto IA Center 2026</description>
+
+    <properties>
+        <java.version>21</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <karate.version>1.4.1</karate.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.karatelabs</groupId>
+            <artifactId>karate-junit5</artifactId>
+            <version>${karate.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.masterthought</groupId>
+            <artifactId>cucumber-reporting</artifactId>
+            <version>5.8.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/java</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </testResource>
+        </testResources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <argLine>-Dfile.encoding=UTF-8</argLine>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
