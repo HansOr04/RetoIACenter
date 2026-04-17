@@ -1,0 +1,79 @@
+[
+  {
+    "codigoPostal": "170101",
+    "municipio": "Quito",
+    "parroquia": "La Mariscal",
+    "canton": "Quito",
+    "provincia": "Pichincha",
+    "pais": "ECU",
+    "zonaRiesgoIncendio": "A",
+    "zonaRiesgoSismo": "2",
+    "zonaFhm": "FHM-SIERRA"
+  },
+  {
+    "codigoPostal": "170515",
+    "municipio": "Quito",
+    "parroquia": "Carcelén",
+    "canton": "Quito",
+    "provincia": "Pichincha",
+    "pais": "ECU",
+    "zonaRiesgoIncendio": "A",
+    "zonaRiesgoSismo": "2",
+    "zonaFhm": "FHM-SIERRA"
+  },
+  {
+    "codigoPostal": "090101",
+    "municipio": "Guayaquil",
+    "parroquia": "Tarqui",
+    "canton": "Guayaquil",
+    "provincia": "Guayas",
+    "pais": "ECU",
+    "zonaRiesgoIncendio": "B",
+    "zonaRiesgoSismo": "1",
+    "zonaFhm": "FHM-COSTA"
+  },
+  {
+    "codigoPostal": "010101",
+    "municipio": "Cuenca",
+    "parroquia": "El Sagrario",
+    "canton": "Cuenca",
+    "provincia": "Azuay",
+    "pais": "ECU",
+    "zonaRiesgoIncendio": "A",
+    "zonaRiesgoSismo": "2",
+    "zonaFhm": "FHM-SIERRA"
+  },
+  {
+    "codigoPostal": "180101",
+    "municipio": "Ambato",
+    "parroquia": "La Matriz",
+    "canton": "Ambato",
+    "provincia": "Tungurahua",
+    "pais": "ECU",
+    "zonaRiesgoIncendio": "A",
+    "zonaRiesgoSismo": "3",
+    "zonaFhm": "FHM-SIERRA"
+  },
+  {
+    "codigoPostal": "110101",
+    "municipio": "Loja",
+    "parroquia": "El Valle",
+    "canton": "Loja",
+    "provincia": "Loja",
+    "pais": "ECU",
+    "zonaRiesgoIncendio": "A",
+    "zonaRiesgoSismo": "2",
+    "zonaFhm": "FHM-SIERRA"
+  },
+  {
+    "codigoPostal": "060101",
+    "municipio": "Riobamba",
+    "parroquia": "Lizarzaburu",
+    "canton": "Riobamba",
+    "provincia": "Chimborazo",
+    "pais": "ECU",
+    "zonaRiesgoIncendio": "A",
+    "zonaRiesgoSismo": "3",
+    "zonaFhm": "FHM-SIERRA"
+  }
+]

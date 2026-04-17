@@ -1,0 +1,47 @@
+[
+  {
+    "id": "AGT-001",
+    "clave": "A001",
+    "nombre": "Juan Pérez Salinas",
+    "correo": "jperez@seguros.ec",
+    "telefono": "+593-99-1000001",
+    "oficina": "Quito Centro",
+    "activo": true
+  },
+  {
+    "id": "AGT-002",
+    "clave": "A002",
+    "nombre": "Ana Martínez Vega",
+    "correo": "amartinez@seguros.ec",
+    "telefono": "+593-99-1000002",
+    "oficina": "Guayaquil Norte",
+    "activo": true
+  },
+  {
+    "id": "AGT-003",
+    "clave": "A003",
+    "nombre": "Luis Cárdenas Ríos",
+    "correo": "lcardenas@seguros.ec",
+    "telefono": "+593-99-1000003",
+    "oficina": "Cuenca",
+    "activo": true
+  },
+  {
+    "id": "AGT-004",
+    "clave": "A004",
+    "nombre": "Patricia Romero Loor",
+    "correo": "promero@seguros.ec",
+    "telefono": "+593-99-1000004",
+    "oficina": "Ambato",
+    "activo": false
+  },
+  {
+    "id": "AGT-005",
+    "clave": "A005",
+    "nombre": "Roberto Andrade Mora",
+    "correo": "randrade@seguros.ec",
+    "telefono": "+593-99-1000005",
+    "oficina": "Quito Norte",
+    "activo": true
+  }
+]

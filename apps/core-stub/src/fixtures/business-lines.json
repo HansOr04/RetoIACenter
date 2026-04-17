@@ -1,0 +1,37 @@
+[
+  {
+    "id": "BL-DANOS",
+    "codigo": "DA",
+    "nombre": "Daños",
+    "descripcion": "Seguro de daños a bienes inmuebles y muebles",
+    "activo": true
+  },
+  {
+    "id": "BL-INCENDIO",
+    "codigo": "INC",
+    "nombre": "Incendio y Líneas Aliadas",
+    "descripcion": "Cobertura contra incendio, rayo y explosión",
+    "activo": true
+  },
+  {
+    "id": "BL-EQUIPO",
+    "codigo": "EE",
+    "nombre": "Equipo Electrónico",
+    "descripcion": "Seguro de equipo electrónico y maquinaria",
+    "activo": true
+  },
+  {
+    "id": "BL-ROBO",
+    "codigo": "ROB",
+    "nombre": "Robo y Asalto",
+    "descripcion": "Cobertura contra robo con violencia",
+    "activo": true
+  },
+  {
+    "id": "BL-RESPONSABILIDAD",
+    "codigo": "RC",
+    "nombre": "Responsabilidad Civil",
+    "descripcion": "Responsabilidad civil general",
+    "activo": true
+  }
+]

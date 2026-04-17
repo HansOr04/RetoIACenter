@@ -1,0 +1,359 @@
+openapi: 3.1.0
+info:
+  title: plataforma-core-ohs (stub)
+  version: 1.0.0
+  description: |
+    Mock del sistema core de la aseguradora. Expone catálogos maestros, datos de
+    suscriptores, agentes y configuración de pólizas. En producción este servicio
+    sería el ERP/core de la compañía; en el reto se implementa como stub con fixtures.
+
+servers:
+  - url: http://localhost:4000
+    description: Servidor de desarrollo local
+
+paths:
+
+  /v1/subscribers:
+    get:
+      summary: Listar suscriptores (asegurados)
+      operationId: listSubscribers
+      tags: [Subscribers]
+      responses:
+        '200':
+          description: Lista de suscriptores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subscriber'
+
+  /v1/subscribers/{id}:
+    get:
+      summary: Obtener suscriptor por ID
+      operationId: getSubscriber
+      tags: [Subscribers]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Suscriptor encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscriber'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v1/agents:
+    get:
+      summary: Listar agentes
+      operationId: listAgents
+      tags: [Agents]
+      responses:
+        '200':
+          description: Lista de agentes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Agent'
+
+  /v1/agents/{id}:
+    get:
+      summary: Obtener agente por ID
+      operationId: getAgent
+      tags: [Agents]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Agente encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v1/business-lines:
+    get:
+      summary: Listar ramos/líneas de negocio
+      operationId: listBusinessLines
+      tags: [BusinessLines]
+      responses:
+        '200':
+          description: Lista de ramos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BusinessLine'
+
+  /v1/zip-codes/{zipCode}:
+    get:
+      summary: Obtener datos de zona por código postal
+      operationId: getZipCode
+      tags: [ZipCodes]
+      parameters:
+        - name: zipCode
+          in: path
+          required: true
+          schema:
+            type: string
+            example: '170101'
+      responses:
+        '200':
+          description: Datos de zona
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZipCodeZone'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v1/zip-codes/validate:
+    post:
+      summary: Validar si un código postal es reconocido
+      operationId: validateZipCode
+      tags: [ZipCodes]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [codigoPostal]
+              properties:
+                codigoPostal:
+                  type: string
+      responses:
+        '200':
+          description: Resultado de validación
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  codigoPostal:
+                    type: string
+                  valid:
+                    type: boolean
+
+  /v1/folios:
+    get:
+      summary: Listar folios del sistema core
+      operationId: listCoreFolios
+      tags: [Folios]
+      responses:
+        '200':
+          description: Lista de folios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CoreFolio'
+
+  /v1/catalogs/risk-classification:
+    get:
+      summary: Catálogo de clasificaciones de riesgo / tipos de construcción
+      operationId: getRiskClassification
+      tags: [Catalogs]
+      responses:
+        '200':
+          description: Lista de clasificaciones
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RiskClassification'
+
+  /v1/catalogs/guarantees:
+    get:
+      summary: Catálogo de garantías/coberturas disponibles
+      operationId: getGuarantees
+      tags: [Catalogs]
+      responses:
+        '200':
+          description: Lista de garantías
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Guarantee'
+
+  /v1/tariffs/{type}:
+    get:
+      summary: Obtener tarifas por tipo
+      operationId: getTariffs
+      tags: [Tariffs]
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [incendio, cat, fhm, equipo-electronico]
+      responses:
+        '200':
+          description: Tarifas del tipo solicitado
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+components:
+  schemas:
+    Subscriber:
+      type: object
+      properties:
+        id:
+          type: string
+        rfc:
+          type: string
+        razonSocial:
+          type: string
+        nombre:
+          type: string
+        tipo:
+          type: string
+          enum: [MORAL, FISICA]
+        correo:
+          type: string
+          format: email
+        telefono:
+          type: string
+
+    Agent:
+      type: object
+      properties:
+        id:
+          type: string
+        clave:
+          type: string
+        nombre:
+          type: string
+        correo:
+          type: string
+          format: email
+        oficina:
+          type: string
+        activo:
+          type: boolean
+
+    BusinessLine:
+      type: object
+      properties:
+        id:
+          type: string
+        codigo:
+          type: string
+        nombre:
+          type: string
+        descripcion:
+          type: string
+        activo:
+          type: boolean
+
+    ZipCodeZone:
+      type: object
+      properties:
+        codigoPostal:
+          type: string
+        municipio:
+          type: string
+        provincia:
+          type: string
+        pais:
+          type: string
+        zonaRiesgoIncendio:
+          type: string
+        zonaRiesgoSismo:
+          type: string
+        zonaFhm:
+          type: string
+
+    RiskClassification:
+      type: object
+      properties:
+        id:
+          type: string
+        codigo:
+          type: string
+        nombre:
+          type: string
+        factorRiesgo:
+          type: number
+
+    Guarantee:
+      type: object
+      properties:
+        id:
+          type: string
+        codigo:
+          type: string
+        nombre:
+          type: string
+        descripcion:
+          type: string
+        obligatoria:
+          type: boolean
+        categoria:
+          type: string
+          enum: [BASICA, CATASTROFE, FHM, ADICIONAL]
+
+    CoreFolio:
+      type: object
+      properties:
+        id:
+          type: string
+        numeroFolio:
+          type: string
+        status:
+          type: string
+        rfcContratante:
+          type: string
+        agentId:
+          type: string
+        primaTotal:
+          type: number
+          nullable: true
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        code:
+          type: string
+
+  responses:
+    NotFound:
+      description: Recurso no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    BadRequest:
+      description: Solicitud inválida
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'

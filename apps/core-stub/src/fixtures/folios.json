@@ -1,0 +1,26 @@
+[
+  {
+    "id": "FOL-DEMO-001",
+    "numeroFolio": "F2026-0001",
+    "status": "CALCULADO",
+    "rfcContratante": "SOFK900101XXX",
+    "nombreContratante": "Sofka Technologies S.A.S.",
+    "agentId": "AGT-001",
+    "businessLineId": "BL-DANOS",
+    "primaTotal": 1250.75,
+    "createdAt": "2026-04-01T10:00:00Z",
+    "updatedAt": "2026-04-01T14:30:00Z"
+  },
+  {
+    "id": "FOL-DEMO-002",
+    "numeroFolio": "F2026-0002",
+    "status": "BORRADOR",
+    "rfcContratante": "MARM780920GYR",
+    "nombreContratante": "María Rodríguez Mora",
+    "agentId": "AGT-003",
+    "businessLineId": "BL-DANOS",
+    "primaTotal": null,
+    "createdAt": "2026-04-10T09:15:00Z",
+    "updatedAt": "2026-04-10T09:15:00Z"
+  }
+]

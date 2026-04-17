@@ -1,0 +1,66 @@
+[
+  {
+    "id": "GAR-001",
+    "codigo": "INCENDIO",
+    "nombre": "Incendio y Rayo",
+    "descripcion": "Cubre daños por incendio, rayo y sus consecuencias directas",
+    "obligatoria": true,
+    "categoria": "BASICA"
+  },
+  {
+    "id": "GAR-002",
+    "codigo": "EXPLOSION",
+    "nombre": "Explosión",
+    "descripcion": "Daños causados por explosión de gas doméstico o industrial",
+    "obligatoria": false,
+    "categoria": "BASICA"
+  },
+  {
+    "id": "GAR-003",
+    "codigo": "SISMO",
+    "nombre": "Terremoto y Temblor",
+    "descripcion": "Daños causados por movimientos telúricos",
+    "obligatoria": false,
+    "categoria": "CATASTROFE"
+  },
+  {
+    "id": "GAR-004",
+    "codigo": "INUNDACION",
+    "nombre": "Inundación",
+    "descripcion": "Daños por inundación de cuerpos de agua exteriores",
+    "obligatoria": false,
+    "categoria": "CATASTROFE"
+  },
+  {
+    "id": "GAR-005",
+    "codigo": "FHM",
+    "nombre": "Fenómenos Hidrometeorológicos",
+    "descripcion": "Huracán, ciclón, tifón, lluvia, granizo, viento",
+    "obligatoria": false,
+    "categoria": "FHM"
+  },
+  {
+    "id": "GAR-006",
+    "codigo": "ROBO",
+    "nombre": "Robo con Violencia",
+    "descripcion": "Sustracción de bienes mediante violencia o intimidación",
+    "obligatoria": false,
+    "categoria": "ADICIONAL"
+  },
+  {
+    "id": "GAR-007",
+    "codigo": "EQUIPO_ELECTRONICO",
+    "nombre": "Equipo Electrónico",
+    "descripcion": "Daños accidentales a equipos electrónicos y de cómputo",
+    "obligatoria": false,
+    "categoria": "ADICIONAL"
+  },
+  {
+    "id": "GAR-008",
+    "codigo": "TEV",
+    "nombre": "Terrorismo, Explosión y Vandalismo",
+    "descripcion": "Daños por actos de terrorismo, motín o vandalismo",
+    "obligatoria": false,
+    "categoria": "ADICIONAL"
+  }
+]

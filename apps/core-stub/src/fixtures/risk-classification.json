@@ -1,0 +1,37 @@
+[
+  {
+    "id": "RC-001",
+    "codigo": "SOLIDA",
+    "nombre": "Construcción Sólida",
+    "descripcion": "Estructura de hormigón armado o mampostería, cubierta de losa o teja",
+    "factorRiesgo": 1.0
+  },
+  {
+    "id": "RC-002",
+    "codigo": "MIXTA",
+    "nombre": "Construcción Mixta",
+    "descripcion": "Estructura mixta: parte sólida y parte madera o metálica",
+    "factorRiesgo": 1.5
+  },
+  {
+    "id": "RC-003",
+    "codigo": "MADERA",
+    "nombre": "Construcción en Madera",
+    "descripcion": "Estructura predominantemente de madera",
+    "factorRiesgo": 2.5
+  },
+  {
+    "id": "RC-004",
+    "codigo": "METALICA",
+    "nombre": "Estructura Metálica",
+    "descripcion": "Estructura de acero con cubierta metálica",
+    "factorRiesgo": 1.3
+  },
+  {
+    "id": "RC-005",
+    "codigo": "PREFABRICADA",
+    "nombre": "Prefabricada",
+    "descripcion": "Elementos prefabricados de hormigón o panel",
+    "factorRiesgo": 1.2
+  }
+]

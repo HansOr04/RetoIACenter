@@ -1,0 +1,72 @@
+[
+  {
+    "id": "SUB-001",
+    "rfc": "SOFK900101XXX",
+    "razonSocial": "Sofka Technologies S.A.S.",
+    "tipo": "MORAL",
+    "correo": "seguros@sofka.com.co",
+    "telefono": "+57-300-0000001",
+    "direccion": {
+      "calle": "Carrera 48 No. 26-85",
+      "ciudad": "Medellín",
+      "estado": "Antioquia",
+      "pais": "COL"
+    }
+  },
+  {
+    "id": "SUB-002",
+    "rfc": "GOLU850315MDF",
+    "razonSocial": "Grupo López Ulloa S.A.",
+    "tipo": "MORAL",
+    "correo": "contacto@grupolopez.ec",
+    "telefono": "+593-99-0000002",
+    "direccion": {
+      "calle": "Av. Shyris N36-188",
+      "ciudad": "Quito",
+      "estado": "Pichincha",
+      "pais": "ECU"
+    }
+  },
+  {
+    "id": "SUB-003",
+    "rfc": "MARM780920GYR",
+    "nombre": "María Rodríguez Mora",
+    "tipo": "FISICA",
+    "correo": "mrodriguez@email.com",
+    "telefono": "+593-98-0000003",
+    "direccion": {
+      "calle": "Calle Sucre 12-45",
+      "ciudad": "Cuenca",
+      "estado": "Azuay",
+      "pais": "ECU"
+    }
+  },
+  {
+    "id": "SUB-004",
+    "rfc": "VACP920612QTO",
+    "nombre": "Carlos Vargas Pinto",
+    "tipo": "FISICA",
+    "correo": "cvargas@email.com",
+    "telefono": "+593-97-0000004",
+    "direccion": {
+      "calle": "Av. 9 de Octubre 123",
+      "ciudad": "Guayaquil",
+      "estado": "Guayas",
+      "pais": "ECU"
+    }
+  },
+  {
+    "id": "SUB-005",
+    "rfc": "COMF010101GYE",
+    "razonSocial": "Comercial Fénix S.A.",
+    "tipo": "MORAL",
+    "correo": "gerencia@fenix.ec",
+    "telefono": "+593-96-0000005",
+    "direccion": {
+      "calle": "Cdla. Kennedy Norte, Manzana K Villa 5",
+      "ciudad": "Guayaquil",
+      "estado": "Guayas",
+      "pais": "ECU"
+    }
+  }
+]
