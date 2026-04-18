@@ -4,9 +4,11 @@ import com.sofka.cotizador.application.usecase.*;
 import com.sofka.cotizador.domain.model.DatosGenerales;
 import com.sofka.cotizador.domain.model.Folio;
 import com.sofka.cotizador.domain.model.LayoutUbicaciones;
+import com.sofka.cotizador.domain.model.ProgresoCotizacion;
 import com.sofka.cotizador.domain.model.SeccionesAplican;
 import com.sofka.cotizador.interfaces.rest.dto.*;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -25,17 +27,20 @@ public class FolioController {
     private final ConsultarDatosGeneralesUseCase consultarDatosGeneralesUseCase;
     private final ActualizarLayoutUseCase actualizarLayoutUseCase;
     private final ConsultarLayoutUseCase consultarLayoutUseCase;
+    private final ConsultarEstadoFolioUseCase consultarEstadoFolioUseCase;
 
     public FolioController(CrearFolioUseCase crearFolioUseCase,
                            ActualizarDatosGeneralesUseCase actualizarDatosGeneralesUseCase,
                            ConsultarDatosGeneralesUseCase consultarDatosGeneralesUseCase,
                            ActualizarLayoutUseCase actualizarLayoutUseCase,
-                           ConsultarLayoutUseCase consultarLayoutUseCase) {
+                           ConsultarLayoutUseCase consultarLayoutUseCase,
+                           ConsultarEstadoFolioUseCase consultarEstadoFolioUseCase) {
         this.crearFolioUseCase = crearFolioUseCase;
         this.actualizarDatosGeneralesUseCase = actualizarDatosGeneralesUseCase;
         this.consultarDatosGeneralesUseCase = consultarDatosGeneralesUseCase;
         this.actualizarLayoutUseCase = actualizarLayoutUseCase;
         this.consultarLayoutUseCase = consultarLayoutUseCase;
+        this.consultarEstadoFolioUseCase = consultarEstadoFolioUseCase;
     }
 
     @PostMapping
@@ -114,6 +119,39 @@ public class FolioController {
         ConsultarLayoutCommand command = new ConsultarLayoutCommand(numeroFolio);
         Folio folio = consultarLayoutUseCase.ejecutar(command);
         return ResponseEntity.ok(toLayoutResponse(folio));
+    }
+
+    @GetMapping("/{numeroFolio}/estado")
+    public ResponseEntity<EstadoFolioResponse> consultarEstado(
+            @PathVariable String numeroFolio) {
+
+        log.info("Consultando estado folio: {}", numeroFolio);
+
+        EstadoFolioResult result = consultarEstadoFolioUseCase.ejecutar(
+                new ConsultarEstadoFolioCommand(numeroFolio));
+
+        return ResponseEntity.ok(toEstadoFolioResponse(result));
+    }
+
+    private EstadoFolioResponse toEstadoFolioResponse(EstadoFolioResult result) {
+        Folio folio = result.folio();
+        ProgresoCotizacion progreso = result.progreso();
+
+        List<EstadoFolioResponse.AlertaData> alertas = progreso.alertas().stream()
+                .map(a -> new EstadoFolioResponse.AlertaData(a.seccion(), a.mensaje()))
+                .toList();
+
+        return new EstadoFolioResponse(
+                folio.getNumeroFolio(),
+                folio.getEstado().name(),
+                folio.getVersion(),
+                folio.getFechaCreacion().toString(),
+                folio.getFechaUltimaActualizacion().toString(),
+                progreso.porcentajeProgreso(),
+                progreso.esCalculable(),
+                alertas,
+                progreso.seccionesCompletadas()
+        );
     }
 
     private LayoutUbicacionesResponse toLayoutResponse(Folio folio) {

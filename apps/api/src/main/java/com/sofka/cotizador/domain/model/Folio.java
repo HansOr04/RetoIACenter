@@ -6,6 +6,10 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Builder
@@ -43,6 +47,27 @@ public class Folio {
                 .datosGenerales(datos)
                 .layoutUbicaciones(this.layoutUbicaciones)
                 .build();
+    }
+
+    public ProgresoCotizacion calcularProgreso() {
+        Map<String, Boolean> secciones = new LinkedHashMap<>();
+        secciones.put("datosGenerales", datosGenerales != null);
+        secciones.put("layoutUbicaciones", layoutUbicaciones != null);
+
+        long completas = secciones.values().stream().filter(v -> v).count();
+        int total = secciones.size();
+        int porcentaje = (int) Math.round((completas * 100.0) / total);
+        boolean calculable = completas == total;
+
+        List<AlertaProgreso> alertas = new ArrayList<>();
+        if (!secciones.get("datosGenerales"))
+            alertas.add(new AlertaProgreso("datosGenerales",
+                    "Debe completar los datos generales del tomador"));
+        if (!secciones.get("layoutUbicaciones"))
+            alertas.add(new AlertaProgreso("layoutUbicaciones",
+                    "Debe configurar el layout de ubicaciones"));
+
+        return new ProgresoCotizacion(porcentaje, calculable, alertas, secciones);
     }
 
     public Folio actualizarLayoutUbicaciones(LayoutUbicaciones layout) {
