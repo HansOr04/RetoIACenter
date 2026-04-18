@@ -49,4 +49,12 @@ public class GlobalExceptionHandler {
         problem.setTitle("Error de validación");
         return problem;
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ProblemDetail handleIllegalArgument(IllegalArgumentException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setType(URI.create("https://cotizador.sofka.com/errors/regla-negocio"));
+        problem.setTitle("Regla de negocio violada");
+        return problem;
+    }
 }

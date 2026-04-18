@@ -1,7 +1,9 @@
 package com.sofka.cotizador.infrastructure.persistence;
 
 import com.sofka.cotizador.domain.model.DatosGenerales;
+import com.sofka.cotizador.domain.model.LayoutUbicaciones;
 import com.sofka.cotizador.infrastructure.persistence.converter.DatosGeneralesConverter;
+import com.sofka.cotizador.infrastructure.persistence.converter.LayoutUbicacionesConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -47,4 +49,8 @@ public class FolioJpaEntity {
     @Convert(converter = DatosGeneralesConverter.class)
     @Column(name = "datos_generales", columnDefinition = "jsonb")
     private DatosGenerales datosGenerales;
+
+    @Convert(converter = LayoutUbicacionesConverter.class)
+    @Column(name = "layout_ubicaciones", columnDefinition = "jsonb")
+    private LayoutUbicaciones layoutUbicaciones;
 }

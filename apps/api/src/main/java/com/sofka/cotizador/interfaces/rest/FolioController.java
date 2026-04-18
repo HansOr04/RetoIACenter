@@ -3,6 +3,8 @@ package com.sofka.cotizador.interfaces.rest;
 import com.sofka.cotizador.application.usecase.*;
 import com.sofka.cotizador.domain.model.DatosGenerales;
 import com.sofka.cotizador.domain.model.Folio;
+import com.sofka.cotizador.domain.model.LayoutUbicaciones;
+import com.sofka.cotizador.domain.model.SeccionesAplican;
 import com.sofka.cotizador.interfaces.rest.dto.*;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -21,13 +23,19 @@ public class FolioController {
     private final CrearFolioUseCase crearFolioUseCase;
     private final ActualizarDatosGeneralesUseCase actualizarDatosGeneralesUseCase;
     private final ConsultarDatosGeneralesUseCase consultarDatosGeneralesUseCase;
+    private final ActualizarLayoutUseCase actualizarLayoutUseCase;
+    private final ConsultarLayoutUseCase consultarLayoutUseCase;
 
     public FolioController(CrearFolioUseCase crearFolioUseCase,
                            ActualizarDatosGeneralesUseCase actualizarDatosGeneralesUseCase,
-                           ConsultarDatosGeneralesUseCase consultarDatosGeneralesUseCase) {
+                           ConsultarDatosGeneralesUseCase consultarDatosGeneralesUseCase,
+                           ActualizarLayoutUseCase actualizarLayoutUseCase,
+                           ConsultarLayoutUseCase consultarLayoutUseCase) {
         this.crearFolioUseCase = crearFolioUseCase;
         this.actualizarDatosGeneralesUseCase = actualizarDatosGeneralesUseCase;
         this.consultarDatosGeneralesUseCase = consultarDatosGeneralesUseCase;
+        this.actualizarLayoutUseCase = actualizarLayoutUseCase;
+        this.consultarLayoutUseCase = consultarLayoutUseCase;
     }
 
     @PostMapping
@@ -74,6 +82,58 @@ public class FolioController {
         Folio folio = consultarDatosGeneralesUseCase.ejecutar(command);
 
         return ResponseEntity.ok(toDatosGeneralesResponse(folio));
+    }
+
+    @PutMapping("/{numeroFolio}/ubicaciones/layout")
+    public ResponseEntity<LayoutUbicacionesResponse> actualizarLayout(
+            @PathVariable String numeroFolio,
+            @Valid @RequestBody LayoutUbicacionesRequest request) {
+
+        log.info("PUT /api/v1/folios/{}/ubicaciones/layout", numeroFolio);
+
+        LayoutUbicaciones layout = new LayoutUbicaciones(
+                request.numeroUbicaciones(),
+                new SeccionesAplican(
+                        request.seccionesAplican().direccion(),
+                        request.seccionesAplican().datosTecnicos(),
+                        request.seccionesAplican().giroComercial(),
+                        request.seccionesAplican().garantias()
+                )
+        );
+        ActualizarLayoutCommand command = new ActualizarLayoutCommand(numeroFolio, layout);
+        Folio folio = actualizarLayoutUseCase.ejecutar(command);
+        return ResponseEntity.ok(toLayoutResponse(folio));
+    }
+
+    @GetMapping("/{numeroFolio}/ubicaciones/layout")
+    public ResponseEntity<LayoutUbicacionesResponse> consultarLayout(
+            @PathVariable String numeroFolio) {
+
+        log.info("GET /api/v1/folios/{}/ubicaciones/layout", numeroFolio);
+
+        ConsultarLayoutCommand command = new ConsultarLayoutCommand(numeroFolio);
+        Folio folio = consultarLayoutUseCase.ejecutar(command);
+        return ResponseEntity.ok(toLayoutResponse(folio));
+    }
+
+    private LayoutUbicacionesResponse toLayoutResponse(Folio folio) {
+        LayoutUbicacionesResponse.LayoutUbicacionesData data = folio.getLayoutUbicaciones() != null
+                ? new LayoutUbicacionesResponse.LayoutUbicacionesData(
+                        folio.getLayoutUbicaciones().numeroUbicaciones(),
+                        new LayoutUbicacionesResponse.SeccionesAplicanData(
+                                folio.getLayoutUbicaciones().seccionesAplican().direccion(),
+                                folio.getLayoutUbicaciones().seccionesAplican().datosTecnicos(),
+                                folio.getLayoutUbicaciones().seccionesAplican().giroComercial(),
+                                folio.getLayoutUbicaciones().seccionesAplican().garantias()
+                        ))
+                : null;
+        return new LayoutUbicacionesResponse(
+                folio.getNumeroFolio(),
+                folio.getEstado().name(),
+                folio.getVersion(),
+                folio.getFechaUltimaActualizacion().toString(),
+                data
+        );
     }
 
     private FolioResponse toFolioResponse(Folio folio) {

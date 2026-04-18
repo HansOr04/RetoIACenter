@@ -45,6 +45,7 @@ public class FolioJpaAdapter implements FolioRepository {
                 .createdAt(folio.getFechaCreacion())
                 .updatedAt(folio.getFechaUltimaActualizacion())
                 .datosGenerales(folio.getDatosGenerales())
+                .layoutUbicaciones(folio.getLayoutUbicaciones())
                 .build();
     }
 
@@ -60,6 +61,7 @@ public class FolioJpaAdapter implements FolioRepository {
                 .fechaCreacion(entity.getCreatedAt())
                 .fechaUltimaActualizacion(entity.getUpdatedAt())
                 .datosGenerales(entity.getDatosGenerales())
+                .layoutUbicaciones(entity.getLayoutUbicaciones())
                 .build();
     }
 }

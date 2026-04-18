@@ -1,0 +1,1 @@
+- [HU-003 Layout Ubicaciones implementation](project_hu003_layout.md) — decisions, JSONB pattern, domain invariant, wither propagation rules

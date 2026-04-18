@@ -24,6 +24,7 @@ public class Folio {
     private final LocalDateTime fechaCreacion;
     private final LocalDateTime fechaUltimaActualizacion;
     private final DatosGenerales datosGenerales;
+    private final LayoutUbicaciones layoutUbicaciones;
 
     public Folio actualizarDatosGenerales(DatosGenerales datos) {
         if (Objects.equals(datos, this.datosGenerales)) {
@@ -40,6 +41,26 @@ public class Folio {
                 .fechaCreacion(this.fechaCreacion)
                 .fechaUltimaActualizacion(LocalDateTime.now())
                 .datosGenerales(datos)
+                .layoutUbicaciones(this.layoutUbicaciones)
+                .build();
+    }
+
+    public Folio actualizarLayoutUbicaciones(LayoutUbicaciones layout) {
+        if (Objects.equals(layout, this.layoutUbicaciones)) {
+            return this;
+        }
+        return Folio.builder()
+                .id(this.id)
+                .numeroFolio(this.numeroFolio)
+                .idempotencyKey(this.idempotencyKey)
+                .estado(this.estado)
+                .tipoNegocio(this.tipoNegocio)
+                .codigoAgente(this.codigoAgente)
+                .version(this.version + 1)
+                .fechaCreacion(this.fechaCreacion)
+                .fechaUltimaActualizacion(LocalDateTime.now())
+                .datosGenerales(this.datosGenerales)
+                .layoutUbicaciones(layout)
                 .build();
     }
 }
