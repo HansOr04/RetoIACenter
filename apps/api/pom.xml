@@ -91,10 +91,10 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- WebClient (para llamadas al core-stub) -->
+        <!-- AOP — requerido por Resilience4j annotations -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
+            <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
 
         <!-- ─── Testing ──────────────────────────────────────────── -->
@@ -115,6 +115,14 @@
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
             <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Karate — tests de integración API -->
+        <dependency>
+            <groupId>io.karatelabs</groupId>
+            <artifactId>karate-junit5</artifactId>
+            <version>1.4.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -40,6 +40,16 @@ management:
     health:
       show-details: when-authorized
 
+resilience4j:
+  circuitbreaker:
+    instances:
+      core-stub:
+        sliding-window-size: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 2
+        register-health-indicator: true
+
 logging:
   pattern:
     console: '{"timestamp":"%d{yyyy-MM-dd HH:mm:ss.SSS}","level":"%level","service":"${spring.application.name}","trace":"%X{traceId:-}","message":"%message"}%n'
