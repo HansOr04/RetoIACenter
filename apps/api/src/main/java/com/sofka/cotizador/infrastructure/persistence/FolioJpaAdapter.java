@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-// HU-001 — adaptador de persistencia; convierte entre dominio y JPA
 @Component
 public class FolioJpaAdapter implements FolioRepository {
 
@@ -45,6 +44,7 @@ public class FolioJpaAdapter implements FolioRepository {
                 .version(folio.getVersion())
                 .createdAt(folio.getFechaCreacion())
                 .updatedAt(folio.getFechaUltimaActualizacion())
+                .datosGenerales(folio.getDatosGenerales())
                 .build();
     }
 
@@ -59,6 +59,7 @@ public class FolioJpaAdapter implements FolioRepository {
                 .version(entity.getVersion())
                 .fechaCreacion(entity.getCreatedAt())
                 .fechaUltimaActualizacion(entity.getUpdatedAt())
+                .datosGenerales(entity.getDatosGenerales())
                 .build();
     }
 }

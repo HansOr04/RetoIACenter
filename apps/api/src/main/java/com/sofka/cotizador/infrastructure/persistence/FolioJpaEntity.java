@@ -1,11 +1,12 @@
 package com.sofka.cotizador.infrastructure.persistence;
 
+import com.sofka.cotizador.domain.model.DatosGenerales;
+import com.sofka.cotizador.infrastructure.persistence.converter.DatosGeneralesConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
-// HU-001 — entidad JPA; status como String para evitar problemas con enums de PostgreSQL
 @Entity
 @Table(name = "folios")
 @Getter
@@ -42,4 +43,8 @@ public class FolioJpaEntity {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @Convert(converter = DatosGeneralesConverter.class)
+    @Column(name = "datos_generales", columnDefinition = "jsonb")
+    private DatosGenerales datosGenerales;
 }

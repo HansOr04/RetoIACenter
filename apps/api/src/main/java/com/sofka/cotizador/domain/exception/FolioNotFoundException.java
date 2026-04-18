@@ -4,6 +4,6 @@ package com.sofka.cotizador.domain.exception;
 public class FolioNotFoundException extends RuntimeException {
 
     public FolioNotFoundException(String numeroFolio) {
-        super("No existe un folio con número " + numeroFolio);
+        super("Folio no encontrado: " + numeroFolio);
     }
 }

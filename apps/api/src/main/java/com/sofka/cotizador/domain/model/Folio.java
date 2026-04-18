@@ -6,8 +6,8 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
-// HU-001 — agregado raíz del dominio; sin anotaciones de framework
 @Builder
 @Getter
 @ToString
@@ -23,4 +23,23 @@ public class Folio {
     private final Integer version;
     private final LocalDateTime fechaCreacion;
     private final LocalDateTime fechaUltimaActualizacion;
+    private final DatosGenerales datosGenerales;
+
+    public Folio actualizarDatosGenerales(DatosGenerales datos) {
+        if (Objects.equals(datos, this.datosGenerales)) {
+            return this;
+        }
+        return Folio.builder()
+                .id(this.id)
+                .numeroFolio(this.numeroFolio)
+                .idempotencyKey(this.idempotencyKey)
+                .estado(this.estado)
+                .tipoNegocio(this.tipoNegocio)
+                .codigoAgente(this.codigoAgente)
+                .version(this.version + 1)
+                .fechaCreacion(this.fechaCreacion)
+                .fechaUltimaActualizacion(LocalDateTime.now())
+                .datosGenerales(datos)
+                .build();
+    }
 }
