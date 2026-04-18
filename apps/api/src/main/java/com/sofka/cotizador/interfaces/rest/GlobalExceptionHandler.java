@@ -2,6 +2,9 @@ package com.sofka.cotizador.interfaces.rest;
 
 import com.sofka.cotizador.domain.exception.CoreServiceUnavailableException;
 import com.sofka.cotizador.domain.exception.FolioNotFoundException;
+import com.sofka.cotizador.domain.exception.LayoutCapacityExceededException;
+import com.sofka.cotizador.domain.exception.UbicacionNotFoundException;
+import com.sofka.cotizador.domain.exception.VersionConflictException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -55,6 +58,33 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
         problem.setType(URI.create("https://cotizador.sofka.com/errors/regla-negocio"));
         problem.setTitle("Regla de negocio violada");
+        return problem;
+    }
+
+    @ExceptionHandler(LayoutCapacityExceededException.class)
+    public ProblemDetail handleCapacityExceeded(LayoutCapacityExceededException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://cotizador.sofka.com/errors/capacity-exceeded"));
+        problem.setTitle("Capacidad de ubicaciones excedida");
+        return problem;
+    }
+
+    @ExceptionHandler(UbicacionNotFoundException.class)
+    public ProblemDetail handleUbicacionNotFound(UbicacionNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://cotizador.sofka.com/errors/ubicacion-not-found"));
+        problem.setTitle("Ubicación no encontrada");
+        return problem;
+    }
+
+    @ExceptionHandler(VersionConflictException.class)
+    public ProblemDetail handleVersionConflict(VersionConflictException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://cotizador.sofka.com/errors/version-conflict"));
+        problem.setTitle("Conflicto de versión");
+        problem.setProperty("currentVersion", ex.getCurrentVersion());
+        problem.setProperty("receivedVersion", ex.getReceivedVersion());
+        problem.setProperty("numeroFolio", ex.getNumeroFolio());
         return problem;
     }
 }
