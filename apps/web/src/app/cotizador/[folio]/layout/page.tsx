@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { foliosApi } from '@/lib/api';
+import { Button } from '@/components/ui/Button';
 
 const SECCIONES = [
   { key: 'datosTecnicos', label: 'Datos técnicos' },
@@ -52,127 +53,138 @@ export default function LayoutPage() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold mb-1" style={{ color: '#F5F5F0' }}>Layout de ubicaciones</h1>
-        <p className="text-sm" style={{ color: '#6B6B7A' }}>
+      {/* ── Page header ── */}
+      <div style={{ marginBottom: '32px' }}>
+        <h1 className="page-title">Layout de ubicaciones</h1>
+        <p className="page-subtitle">
           Configura cuántas ubicaciones tendrá la póliza y qué secciones aplican.
         </p>
       </div>
 
-      <div className="max-w-lg">
-        <form onSubmit={handleSubmit} className="space-y-8">
+      <div style={{ maxWidth: '480px' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+          {/* ── N° ubicaciones ── */}
           <div>
-            <label className="block text-xs uppercase tracking-widest mb-4" style={{ color: '#6B6B7A' }}>
+            <label
+              className="field-label"
+              style={{ textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '16px', display: 'block' }}
+            >
               ¿Cuántas ubicaciones tiene la póliza?
             </label>
-            <div className="flex items-center gap-6">
+            <div className="flex items-center" style={{ gap: '24px' }}>
               <button
                 type="button"
+                id="btn-decremento-ubicaciones"
                 onClick={() => setNumUbicaciones(n => Math.max(1, n - 1))}
-                className="w-12 h-12 border text-xl transition-colors"
-                style={{ borderColor: '#1E1E2A', color: '#F5F5F0' }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = '#00D9A3';
-                  e.currentTarget.style.color = '#00D9A3';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = '#1E1E2A';
-                  e.currentTarget.style.color = '#F5F5F0';
-                }}
+                className="btn btn-ghost"
+                style={{ width: '48px', height: '48px', padding: 0, fontSize: '1.25rem' }}
               >
                 −
               </button>
-              <span className="font-mono text-5xl w-16 text-center" style={{ color: '#F5F5F0' }}>
+              <span
+                className="mono-display"
+                style={{ fontSize: '3rem', width: '64px', textAlign: 'center', color: 'var(--cream)' }}
+              >
                 {numUbicaciones}
               </span>
               <button
                 type="button"
+                id="btn-incremento-ubicaciones"
                 onClick={() => setNumUbicaciones(n => Math.min(20, n + 1))}
-                className="w-12 h-12 border text-xl transition-colors"
-                style={{ borderColor: '#1E1E2A', color: '#F5F5F0' }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = '#00D9A3';
-                  e.currentTarget.style.color = '#00D9A3';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = '#1E1E2A';
-                  e.currentTarget.style.color = '#F5F5F0';
-                }}
+                className="btn btn-ghost"
+                style={{ width: '48px', height: '48px', padding: 0, fontSize: '1.25rem' }}
               >
                 +
               </button>
             </div>
-            <p className="text-xs mt-2" style={{ color: '#6B6B7A' }}>Máximo 20 ubicaciones</p>
+            <p style={{ fontSize: '0.75rem', color: 'var(--muted)', marginTop: '8px' }}>
+              Máximo 20 ubicaciones
+            </p>
           </div>
 
+          {/* ── Secciones ── */}
           <div>
-            <label className="block text-xs uppercase tracking-widest mb-4" style={{ color: '#6B6B7A' }}>
+            <label
+              className="field-label"
+              style={{ textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '16px', display: 'block' }}
+            >
               Secciones que aplican
             </label>
-            <div className="space-y-3">
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {/* Dirección — siempre activa */}
               <div
-                className="flex items-center gap-3 py-3 border-b"
-                style={{ borderColor: 'rgba(30,30,42,0.5)' }}
+                className="flex items-center"
+                style={{ gap: '12px', padding: '12px 0', borderBottom: '1px solid var(--border)' }}
               >
                 <div
-                  className="w-4 h-4 flex items-center justify-center"
-                  style={{ backgroundColor: '#00D9A3' }}
+                  style={{
+                    width: '16px',
+                    height: '16px',
+                    backgroundColor: 'var(--accent)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
                 >
-                  <span className="text-xs" style={{ color: '#0A0A0F' }}>✓</span>
+                  <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
+                    <path d="M1 3.5l2.5 2.5 4.5-5" stroke="var(--bg)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
                 </div>
-                <span className="text-sm" style={{ color: '#F5F5F0' }}>Dirección</span>
-                <span className="ml-auto text-xs" style={{ color: '#6B6B7A' }}>Obligatorio</span>
+                <span style={{ fontSize: '0.875rem', color: 'var(--cream)' }}>Dirección</span>
+                <span style={{ marginLeft: 'auto', fontSize: '0.6875rem', color: 'var(--muted)' }}>
+                  Obligatorio
+                </span>
               </div>
 
               {SECCIONES.map(({ key, label }) => (
                 <label
                   key={key}
-                  className="flex items-center gap-3 py-3 border-b cursor-pointer"
-                  style={{ borderColor: 'rgba(30,30,42,0.5)' }}
+                  className="flex items-center"
+                  style={{ gap: '12px', padding: '12px 0', borderBottom: '1px solid var(--border)', cursor: 'pointer' }}
                 >
                   <div
-                    className="w-4 h-4 border flex items-center justify-center transition-colors"
-                    style={{
-                      backgroundColor: secciones[key] ? '#00D9A3' : 'transparent',
-                      borderColor: secciones[key] ? '#00D9A3' : '#1E1E2A',
-                    }}
                     onClick={() => toggleSeccion(key)}
+                    style={{
+                      width: '16px',
+                      height: '16px',
+                      border: `1px solid ${secciones[key] ? 'var(--accent)' : 'var(--border-2)'}`,
+                      backgroundColor: secciones[key] ? 'var(--accent)' : 'transparent',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      transition: 'background-color 150ms ease, border-color 150ms ease',
+                      cursor: 'pointer',
+                    }}
                   >
                     {secciones[key] && (
-                      <span className="text-xs" style={{ color: '#0A0A0F' }}>✓</span>
+                      <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
+                        <path d="M1 3.5l2.5 2.5 4.5-5" stroke="var(--bg)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
                     )}
                   </div>
-                  <span className="text-sm" style={{ color: '#F5F5F0' }}>{label}</span>
+                  <span style={{ fontSize: '0.875rem', color: 'var(--cream)' }}>{label}</span>
                 </label>
               ))}
             </div>
           </div>
 
           {error && (
-            <div
-              className="border text-sm px-4 py-3"
-              style={{
-                borderColor: 'rgba(255,77,77,0.3)',
-                backgroundColor: 'rgba(255,77,77,0.05)',
-                color: '#FF4D4D',
-              }}
-            >
-              {error}
-            </div>
+            <div className="error-banner">{error}</div>
           )}
 
-          <button
+          <Button
             type="submit"
-            disabled={saving}
-            className="w-full font-medium py-4 text-sm transition-colors disabled:opacity-50"
-            style={{ backgroundColor: '#00D9A3', color: '#0A0A0F' }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#00A87E')}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#00D9A3')}
+            full
+            loading={saving}
+            size="lg"
+            id="btn-configurar-ubicaciones"
           >
             {saving
-              ? 'Guardando...'
+              ? 'Guardando…'
               : `Configurar ${numUbicaciones} ubicación${numUbicaciones > 1 ? 'es' : ''} →`}
-          </button>
+          </Button>
         </form>
       </div>
     </div>

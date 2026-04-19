@@ -2,6 +2,7 @@
 import { useState, useEffect, FormEvent } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { foliosApi, quotesApi } from '@/lib/api';
+import { Button } from '@/components/ui/Button';
 
 interface CoverageOptions {
   incendioEdificios: boolean;
@@ -84,18 +85,24 @@ export default function CoberturasPage() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold mb-1" style={{ color: '#F5F5F0' }}>Coberturas</h1>
-        <p className="text-sm" style={{ color: '#6B6B7A' }}>
+      {/* ── Page header ── */}
+      <div style={{ marginBottom: '32px' }}>
+        <h1 className="page-title">Coberturas</h1>
+        <p className="page-subtitle">
           Selecciona las coberturas que aplican para este folio.{' '}
           {selectedCount > 0 && (
-            <span style={{ color: '#00D9A3' }}>{selectedCount} seleccionada{selectedCount !== 1 ? 's' : ''}</span>
+            <span style={{ color: 'var(--accent)' }}>
+              {selectedCount} seleccionada{selectedCount !== 1 ? 's' : ''}
+            </span>
           )}
         </p>
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+        <div
+          className="grid grid-cols-1 sm:grid-cols-2"
+          style={{ gap: '8px', marginBottom: '32px' }}
+        >
           {COVERAGE_LABELS.map(({ key, label, desc }) => {
             const on = options[key];
             return (
@@ -103,29 +110,45 @@ export default function CoberturasPage() {
                 key={key}
                 type="button"
                 onClick={() => toggle(key)}
-                className="flex items-center gap-3 px-4 py-3.5 border text-left w-full transition-all"
-                style={{
-                  borderColor: on ? '#00D9A3' : '#1E1E2A',
-                  backgroundColor: on ? 'rgba(0,217,163,0.07)' : '#0D0D13',
-                }}
+                className={`coverage-item ${on ? 'is-on' : ''}`}
+                id={`coverage-${key}`}
               >
-                {/* Checkbox indicator */}
-                <span
-                  className="flex-shrink-0 w-5 h-5 rounded-sm border flex items-center justify-center transition-all"
-                  style={{
-                    borderColor: on ? '#00D9A3' : '#2A2A3A',
-                    backgroundColor: on ? '#00D9A3' : 'transparent',
-                  }}
-                >
+                {/* Custom checkbox */}
+                <span className={`coverage-checkbox ${on ? 'is-on' : ''}`}>
                   {on && (
-                    <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-                      <path d="M1 4l3 3 5-6" stroke="#0A0A0F" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                    <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
+                      <path
+                        d="M1 3.5l2.5 2.5 4.5-5"
+                        stroke="var(--bg)"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
                     </svg>
                   )}
                 </span>
                 <span>
-                  <span className="block text-sm font-medium" style={{ color: on ? '#F5F5F0' : '#9B9BAA' }}>{label}</span>
-                  <span className="block text-xs mt-0.5" style={{ color: '#4A4A5A' }}>{desc}</span>
+                  <span
+                    style={{
+                      display: 'block',
+                      fontSize: '0.8125rem',
+                      fontWeight: 500,
+                      color: on ? 'var(--cream)' : 'var(--muted-2)',
+                      transition: 'color 150ms ease',
+                    }}
+                  >
+                    {label}
+                  </span>
+                  <span
+                    style={{
+                      display: 'block',
+                      fontSize: '0.75rem',
+                      color: 'var(--muted)',
+                      marginTop: '2px',
+                    }}
+                  >
+                    {desc}
+                  </span>
                 </span>
               </button>
             );
@@ -133,19 +156,20 @@ export default function CoberturasPage() {
         </div>
 
         {error && (
-          <div className="border-l-2 px-4 py-3 text-sm mb-6" style={{ borderColor: '#FF4D4D', backgroundColor: 'rgba(255,77,77,0.06)', color: '#FF4D4D' }}>
+          <div className="error-banner" style={{ marginBottom: '24px' }}>
             {error}
           </div>
         )}
 
-        <button
+        <Button
           type="submit"
+          loading={saving}
           disabled={saving || selectedCount === 0 || version === null}
-          className="px-8 py-3 text-sm font-semibold transition-colors disabled:opacity-40 hover:opacity-90"
-          style={{ backgroundColor: '#00D9A3', color: '#0A0A0F' }}
+          size="lg"
+          id="btn-continuar-calculo"
         >
-          {saving ? 'Guardando...' : 'Continuar al cálculo →'}
-        </button>
+          {saving ? 'Guardando…' : 'Continuar al cálculo →'}
+        </Button>
       </form>
     </div>
   );

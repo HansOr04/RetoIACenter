@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { foliosApi, quotesApi } from '@/lib/api';
 import { formatCurrency } from '@/lib/utils';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 
 interface DesglosePorUbicacion {
   indice: number;
@@ -42,55 +44,47 @@ export default function CalculoPage() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold mb-1" style={{ color: '#F5F5F0' }}>Cálculo de prima</h1>
-        <p className="text-sm" style={{ color: '#6B6B7A' }}>
+      {/* ── Page header ── */}
+      <div style={{ marginBottom: '32px' }}>
+        <h1 className="page-title">Cálculo de prima</h1>
+        <p className="page-subtitle">
           Ejecuta el cálculo para obtener la prima neta y comercial.
         </p>
       </div>
 
-        {!result ? (
-          <div className="max-w-md">
-            <div className="border p-8 mb-6" style={{ borderColor: '#1E1E2A', backgroundColor: '#111118' }}>
-              <p className="text-xs uppercase tracking-widest mb-4" style={{ color: '#6B6B7A' }}>Resumen</p>
-              <p className="text-sm leading-relaxed" style={{ color: 'rgba(245,245,240,0.7)' }}>
-                El cálculo evaluará cada ubicación contra las coberturas configuradas
-                y los catálogos de tarifas vigentes.
-              </p>
+      {!result ? (
+        <div style={{ maxWidth: '480px' }}>
+          <Card style={{ padding: '32px', marginBottom: '24px' }}>
+            <p className="metric-label">Resumen</p>
+            <p style={{ fontSize: '0.875rem', lineHeight: 1.7, color: 'var(--muted)' }}>
+              El cálculo evaluará cada ubicación contra las coberturas configuradas
+              y los catálogos de tarifas vigentes.
+            </p>
+          </Card>
+
+          {error && (
+            <div className="error-banner" style={{ marginBottom: '24px' }}>
+              {error}
             </div>
+          )}
 
-            {error && (
-              <div
-                className="border text-sm px-4 py-3 mb-6"
-                style={{
-                  borderColor: 'rgba(255,77,77,0.3)',
-                  backgroundColor: 'rgba(255,77,77,0.05)',
-                  color: '#FF4D4D',
-                }}
-              >
-                {error}
-              </div>
-            )}
-
-            <button
-              onClick={ejecutarCalculo}
-              disabled={loading}
-              className="w-full font-medium py-4 text-sm transition-colors disabled:opacity-50"
-              style={{ backgroundColor: '#00D9A3', color: '#0A0A0F' }}
-              onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#00A87E')}
-              onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#00D9A3')}
-            >
-              {loading
-                ? <span className="font-mono animate-pulse">Calculando...</span>
-                : 'Ejecutar cálculo →'}
-            </button>
-          </div>
-        ) : (
-          <ResultadoCalculo
-            result={result}
-            onRecalcular={() => setResult(null)}
-          />
-        )}
+          <Button
+            onClick={ejecutarCalculo}
+            loading={loading}
+            full
+            size="lg"
+            id="btn-ejecutar-calculo"
+          >
+            {loading ? 'Calculando…' : 'Ejecutar cálculo →'}
+          </Button>
+        </div>
+      ) : (
+        <ResultadoCalculo
+          result={result}
+          onRecalcular={() => setResult(null)}
+          folio={folio}
+        />
+      )}
     </div>
   );
 }
@@ -98,76 +92,96 @@ export default function CalculoPage() {
 function ResultadoCalculo({
   result,
   onRecalcular,
-}: Readonly<{ result: CalculoResult; onRecalcular: () => void }>) {
+  folio,
+}: Readonly<{ result: CalculoResult; onRecalcular: () => void; folio: string }>) {
   const { primaNeta, primaComercial, factorComercial, primasPorUbicacion } = result;
 
   return (
     <div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-        <div
-          className="border p-6"
-          style={{ borderColor: 'rgba(0,217,163,0.3)', backgroundColor: 'rgba(0,217,163,0.05)' }}
-        >
-          <p className="text-xs uppercase tracking-widest mb-2" style={{ color: '#00D9A3' }}>Prima neta</p>
-          <p className="font-mono text-3xl" style={{ color: '#00D9A3' }}>{formatCurrency(primaNeta)}</p>
-        </div>
-        <div className="border p-6" style={{ borderColor: '#1E1E2A', backgroundColor: '#111118' }}>
-          <p className="text-xs uppercase tracking-widest mb-2" style={{ color: '#6B6B7A' }}>Prima comercial</p>
-          <p className="font-mono text-3xl" style={{ color: '#F5F5F0' }}>{formatCurrency(primaComercial)}</p>
-        </div>
-        <div className="border p-6" style={{ borderColor: '#1E1E2A', backgroundColor: '#111118' }}>
-          <p className="text-xs uppercase tracking-widest mb-2" style={{ color: '#6B6B7A' }}>Factor comercial</p>
-          <p className="font-mono text-3xl" style={{ color: '#F5F5F0' }}>{factorComercial}×</p>
-        </div>
+      {/* ── Summary metrics ── */}
+      <div
+        className="grid grid-cols-1 md:grid-cols-3"
+        style={{ gap: '16px', marginBottom: '40px' }}
+      >
+        <Card variant="accent" style={{ padding: '24px' }}>
+          <p className="metric-label" style={{ color: 'var(--accent)' }}>Prima neta</p>
+          <p className="metric-value metric-value-accent mono-display">
+            {formatCurrency(primaNeta)}
+          </p>
+        </Card>
+        <Card style={{ padding: '24px' }}>
+          <p className="metric-label">Prima comercial</p>
+          <p className="metric-value mono-display">{formatCurrency(primaComercial)}</p>
+        </Card>
+        <Card style={{ padding: '24px' }}>
+          <p className="metric-label">Factor comercial</p>
+          <p className="metric-value mono-display">{factorComercial}×</p>
+        </Card>
       </div>
 
+      {/* ── Desglose por ubicación ── */}
       {primasPorUbicacion && primasPorUbicacion.length > 0 && (
-        <div className="space-y-4">
-          <h3 className="text-xs uppercase tracking-widest" style={{ color: '#6B6B7A' }}>
-            Desglose por ubicación
-          </h3>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <h3 className="metric-label">Desglose por ubicación</h3>
           {primasPorUbicacion.map(pu => (
             <div
               key={pu.indice}
-              className="border"
               style={{
-                borderColor: pu.calculada ? '#1E1E2A' : 'rgba(255,77,77,0.2)',
-                backgroundColor: '#111118',
+                border: `1px solid ${pu.calculada ? 'var(--border)' : 'rgba(240, 68, 71, 0.25)'}`,
+                backgroundColor: 'var(--surface)',
               }}
             >
+              {/* Row header */}
               <div
-                className="flex items-center justify-between p-5 border-b"
-                style={{ borderColor: '#1E1E2A' }}
+                className="flex items-center justify-between"
+                style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}
               >
-                <div className="flex items-center gap-3">
-                  <span className="font-mono text-xs w-6" style={{ color: '#6B6B7A' }}>{pu.indice}</span>
+                <div className="flex items-center" style={{ gap: '12px' }}>
                   <span
-                    className="text-xs font-mono px-2 py-0.5 border"
-                    style={{
-                      color: pu.calculada ? '#00D9A3' : '#FF4D4D',
-                      borderColor: pu.calculada ? 'rgba(0,217,163,0.3)' : 'rgba(255,77,77,0.3)',
-                    }}
+                    className="mono-display"
+                    style={{ fontSize: '0.6875rem', color: 'var(--muted)', width: '24px' }}
+                  >
+                    {pu.indice}
+                  </span>
+                  <span
+                    className="badge"
+                    style={
+                      pu.calculada
+                        ? { color: 'var(--accent)', borderColor: 'rgba(0,200,150,0.3)', background: 'var(--accent-bg)' }
+                        : { color: 'var(--danger)', borderColor: 'rgba(240,68,71,0.3)', background: 'var(--danger-bg)' }
+                    }
                   >
                     {pu.calculada ? 'CALCULADA' : 'INCALCULABLE'}
                   </span>
                 </div>
                 {pu.calculada && pu.total !== undefined && (
-                  <span className="font-mono text-lg" style={{ color: '#F5F5F0' }}>
+                  <span
+                    className="mono-display"
+                    style={{ fontSize: '1.0625rem', color: 'var(--cream)' }}
+                  >
                     {formatCurrency(pu.total)}
                   </span>
                 )}
               </div>
 
+              {/* Desglose */}
               {pu.calculada && pu.desglose && (
-                <div className="p-5 grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div
+                  className="grid grid-cols-2 md:grid-cols-4"
+                  style={{ padding: '16px 20px', gap: '16px' }}
+                >
                   {Object.entries(pu.desglose)
                     .filter(([k]) => k !== 'total')
                     .map(([k, v]) => (
-                      <div key={k} className="font-mono">
-                        <p className="text-xs mb-1" style={{ color: '#6B6B7A' }}>{k}</p>
+                      <div key={k} className="mono-display">
+                        <p style={{ fontSize: '0.6875rem', color: 'var(--muted)', marginBottom: '4px' }}>
+                          {k}
+                        </p>
                         <p
-                          className="text-sm"
-                          style={{ color: Number(v) > 0 ? '#F5F5F0' : '#1E1E2A' }}
+                          style={{
+                            fontSize: '0.8125rem',
+                            color: Number(v) > 0 ? 'var(--cream)' : 'var(--border-2)',
+                          }}
                         >
                           {formatCurrency(Number(v))}
                         </p>
@@ -176,10 +190,15 @@ function ResultadoCalculo({
                 </div>
               )}
 
+              {/* Alertas de error */}
               {!pu.calculada && pu.alertas && pu.alertas.length > 0 && (
-                <div className="p-5 space-y-2">
+                <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   {pu.alertas.map(a => (
-                    <p key={a.codigo} className="text-xs font-mono" style={{ color: '#FF4D4D' }}>
+                    <p
+                      key={a.codigo}
+                      className="mono-display"
+                      style={{ fontSize: '0.75rem', color: 'var(--danger)' }}
+                    >
                       ! {a.codigo}: {a.mensaje}
                     </p>
                   ))}
@@ -190,31 +209,21 @@ function ResultadoCalculo({
         </div>
       )}
 
-      <div className="mt-8 flex gap-4">
-        <button
+      {/* ── Actions ── */}
+      <div className="flex gap-4" style={{ marginTop: '32px' }}>
+        <Button
+          variant="ghost"
           onClick={onRecalcular}
-          className="border px-6 py-3 text-sm transition-colors"
-          style={{ borderColor: '#1E1E2A', color: '#6B6B7A' }}
-          onMouseEnter={e => {
-            e.currentTarget.style.borderColor = '#F5F5F0';
-            e.currentTarget.style.color = '#F5F5F0';
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.borderColor = '#1E1E2A';
-            e.currentTarget.style.color = '#6B6B7A';
-          }}
+          id="btn-recalcular"
         >
           Recalcular
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => { window.location.href = '/'; }}
-          className="font-medium px-8 py-3 text-sm transition-colors"
-          style={{ backgroundColor: '#00D9A3', color: '#0A0A0F' }}
-          onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#00A87E')}
-          onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#00D9A3')}
+          id="btn-nueva-cotizacion-calculo"
         >
           Nueva cotización
-        </button>
+        </Button>
       </div>
     </div>
   );

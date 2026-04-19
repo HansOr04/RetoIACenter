@@ -3,6 +3,9 @@ import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { foliosApi } from '@/lib/api';
 import { FieldError } from '@/components/FieldError';
+import { Button } from '@/components/ui/Button';
+import { Field, Input, Select, Textarea } from '@/components/ui/Input';
+import { SectionLabel } from '@/components/ui/SectionLabel';
 
 const TIPOS_INMUEBLE = ['CASA', 'EDIFICIO', 'LOCAL_COMERCIAL', 'BODEGA'] as const;
 const USOS = ['HABITACIONAL', 'COMERCIAL', 'MIXTO'] as const;
@@ -18,11 +21,6 @@ interface FormState {
   numeroPisos: string;
   descripcion: string;
 }
-
-const inputCls = 'w-full border text-sm px-4 py-3 focus:outline-none transition-colors';
-const inputStyle = { backgroundColor: '#111118', borderColor: '#1E1E2A', color: '#F5F5F0' };
-const onFocus = (e: { currentTarget: HTMLElement }) => (e.currentTarget.style.borderColor = '#00D9A3');
-const onBlur  = (e: { currentTarget: HTMLElement }) => (e.currentTarget.style.borderColor = '#1E1E2A');
 
 export default function DatosGeneralesPage() {
   const { folio } = useParams<{ folio: string }>();
@@ -69,7 +67,7 @@ export default function DatosGeneralesPage() {
     }
   }
 
-  function field(key: keyof FormState) {
+  function fieldProps(key: keyof FormState) {
     return {
       id: key,
       value: form[key],
@@ -77,144 +75,122 @@ export default function DatosGeneralesPage() {
     };
   }
 
-  const bc = (k: keyof FormState) => errors[k] ? '#FF4D4D' : '#1E1E2A';
-
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold mb-1" style={{ color: '#F5F5F0' }}>Datos generales</h1>
-        <p className="text-sm" style={{ color: '#6B6B7A' }}>
-          Información del tomador y el bien asegurado.
-        </p>
+      {/* ── Page header ── */}
+      <div style={{ marginBottom: '32px' }}>
+        <h1 className="page-title">Datos generales</h1>
+        <p className="page-subtitle">Información del tomador y el bien asegurado.</p>
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-          {/* Tomador */}
-          <div className="space-y-5">
-            <p className="text-[11px] font-semibold uppercase tracking-widest border-b pb-2"
-              style={{ color: '#6B6B7A', borderColor: '#1E1E2A' }}>
-              Tomador del seguro
-            </p>
+        <div
+          className="grid grid-cols-1 md:grid-cols-2"
+          style={{ gap: '32px', marginBottom: '32px' }}
+        >
+          {/* ── Tomador del seguro ── */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <SectionLabel>Tomador del seguro</SectionLabel>
 
-            <div>
-              <label htmlFor="nombreTomador" className="block text-xs mb-1.5" style={{ color: '#6B6B7A' }}>
-                Nombre / Razón social *
-              </label>
-              <input className={inputCls} placeholder="Empresa Ejemplo S.A."
-                style={{ ...inputStyle, borderColor: bc('nombreTomador') }}
-                onFocus={onFocus} onBlur={e => (e.currentTarget.style.borderColor = bc('nombreTomador'))}
-                {...field('nombreTomador')} />
+            <Field id="nombreTomador" label="Nombre / Razón social" required error={errors.nombreTomador}>
+              <Input
+                placeholder="Empresa Ejemplo S.A."
+                error={!!errors.nombreTomador}
+                {...fieldProps('nombreTomador')}
+              />
               <FieldError msg={errors.nombreTomador} />
-            </div>
+            </Field>
 
-            <div>
-              <label htmlFor="rucCedula" className="block text-xs mb-1.5" style={{ color: '#6B6B7A' }}>
-                RUC / Cédula *
-              </label>
-              <input className={inputCls} placeholder="1792345678001"
-                style={{ ...inputStyle, borderColor: bc('rucCedula') }}
-                onFocus={onFocus} onBlur={e => (e.currentTarget.style.borderColor = bc('rucCedula'))}
-                {...field('rucCedula')} />
+            <Field id="rucCedula" label="RUC / Cédula" required error={errors.rucCedula}>
+              <Input
+                placeholder="1792345678001"
+                error={!!errors.rucCedula}
+                {...fieldProps('rucCedula')}
+              />
               <FieldError msg={errors.rucCedula} />
-            </div>
+            </Field>
 
-            <div>
-              <label htmlFor="correoElectronico" className="block text-xs mb-1.5" style={{ color: '#6B6B7A' }}>
-                Correo electrónico *
-              </label>
-              <input type="email" className={inputCls} placeholder="contacto@empresa.com"
-                style={{ ...inputStyle, borderColor: bc('correoElectronico') }}
-                onFocus={onFocus} onBlur={e => (e.currentTarget.style.borderColor = bc('correoElectronico'))}
-                {...field('correoElectronico')} />
+            <Field id="correoElectronico" label="Correo electrónico" required error={errors.correoElectronico}>
+              <Input
+                type="email"
+                placeholder="contacto@empresa.com"
+                error={!!errors.correoElectronico}
+                {...fieldProps('correoElectronico')}
+              />
               <FieldError msg={errors.correoElectronico} />
-            </div>
+            </Field>
 
-            <div>
-              <label htmlFor="telefonoContacto" className="block text-xs mb-1.5" style={{ color: '#6B6B7A' }}>
-                Teléfono
-              </label>
-              <input className={inputCls} placeholder="0991234567"
-                style={inputStyle} onFocus={onFocus} onBlur={onBlur}
-                {...field('telefonoContacto')} />
-            </div>
+            <Field id="telefonoContacto" label="Teléfono">
+              <Input
+                placeholder="0991234567"
+                {...fieldProps('telefonoContacto')}
+              />
+            </Field>
           </div>
 
-          {/* Bien asegurado */}
-          <div className="space-y-5">
-            <p className="text-[11px] font-semibold uppercase tracking-widest border-b pb-2"
-              style={{ color: '#6B6B7A', borderColor: '#1E1E2A' }}>
-              Bien asegurado
-            </p>
+          {/* ── Bien asegurado ── */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <SectionLabel>Bien asegurado</SectionLabel>
 
-            <div>
-              <label htmlFor="tipoInmueble" className="block text-xs mb-1.5" style={{ color: '#6B6B7A' }}>
-                Tipo de inmueble *
-              </label>
-              <select className={inputCls} style={inputStyle} onFocus={onFocus} onBlur={onBlur}
-                {...field('tipoInmueble')}>
-                {TIPOS_INMUEBLE.map(t => <option key={t} value={t}>{t.replaceAll('_', ' ')}</option>)}
-              </select>
-            </div>
+            <Field id="tipoInmueble" label="Tipo de inmueble" required>
+              <Select {...fieldProps('tipoInmueble')}>
+                {TIPOS_INMUEBLE.map(t => (
+                  <option key={t} value={t}>{t.replaceAll('_', ' ')}</option>
+                ))}
+              </Select>
+            </Field>
 
-            <div>
-              <label htmlFor="usoPrincipal" className="block text-xs mb-1.5" style={{ color: '#6B6B7A' }}>
-                Uso principal *
-              </label>
-              <select className={inputCls} style={inputStyle} onFocus={onFocus} onBlur={onBlur}
-                {...field('usoPrincipal')}>
+            <Field id="usoPrincipal" label="Uso principal" required>
+              <Select {...fieldProps('usoPrincipal')}>
                 {USOS.map(u => <option key={u} value={u}>{u}</option>)}
-              </select>
+              </Select>
+            </Field>
+
+            <div className="grid grid-cols-2" style={{ gap: '16px' }}>
+              <Field id="anoConstruccion" label="Año construcción">
+                <Input
+                  type="number"
+                  placeholder="2010"
+                  {...fieldProps('anoConstruccion')}
+                />
+              </Field>
+              <Field id="numeroPisos" label="N° pisos">
+                <Input
+                  type="number"
+                  placeholder="3"
+                  {...fieldProps('numeroPisos')}
+                />
+              </Field>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="anoConstruccion" className="block text-xs mb-1.5" style={{ color: '#6B6B7A' }}>
-                  Año construcción
-                </label>
-                <input type="number" className={inputCls} placeholder="2010"
-                  style={inputStyle} onFocus={onFocus} onBlur={onBlur}
-                  {...field('anoConstruccion')} />
-              </div>
-              <div>
-                <label htmlFor="numeroPisos" className="block text-xs mb-1.5" style={{ color: '#6B6B7A' }}>
-                  N° pisos
-                </label>
-                <input type="number" className={inputCls} placeholder="3"
-                  style={inputStyle} onFocus={onFocus} onBlur={onBlur}
-                  {...field('numeroPisos')} />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="descripcion" className="block text-xs mb-1.5" style={{ color: '#6B6B7A' }}>
-                Descripción
-              </label>
-              <textarea className={`${inputCls} resize-none h-20`} placeholder="Detalles del bien..."
-                style={inputStyle} onFocus={onFocus} onBlur={onBlur}
-                {...field('descripcion')} />
-            </div>
+            <Field id="descripcion" label="Descripción">
+              <Textarea
+                placeholder="Detalles del bien…"
+                style={{ resize: 'none', height: '80px' }}
+                {...fieldProps('descripcion')}
+              />
+            </Field>
           </div>
         </div>
 
         {apiError && (
-          <div className="border-l-2 px-4 py-3 text-sm mb-6"
-            style={{ borderColor: '#FF4D4D', backgroundColor: 'rgba(255,77,77,0.06)', color: '#FF4D4D' }}>
+          <div className="error-banner" style={{ marginBottom: '24px' }}>
             {apiError}
           </div>
         )}
 
         <div className="flex gap-3">
-          <button type="submit" disabled={saving}
-            className="font-semibold px-8 py-3 text-sm transition-colors disabled:opacity-50 hover:opacity-90"
-            style={{ backgroundColor: '#00D9A3', color: '#0A0A0F' }}>
-            {saving ? 'Guardando...' : 'Guardar y continuar →'}
-          </button>
-          <button type="button" onClick={() => router.push(`/cotizador/${folio}/estado`)}
-            className="border px-6 py-3 text-sm transition-colors hover:opacity-80"
-            style={{ borderColor: '#1E1E2A', color: '#6B6B7A' }}>
+          <Button type="submit" loading={saving} id="btn-guardar-datos-generales">
+            {saving ? 'Guardando…' : 'Guardar y continuar →'}
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => router.push(`/cotizador/${folio}/estado`)}
+            id="btn-ver-estado"
+          >
             Ver estado
-          </button>
+          </Button>
         </div>
       </form>
     </div>

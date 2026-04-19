@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { foliosApi } from '@/lib/api';
 import { FolioHeader } from '@/components/FolioHeader';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 
 interface EstadoData {
   numeroFolio: string;
@@ -39,7 +41,7 @@ export default function EstadoPage() {
 
   return (
     <div>
-      <div className="mt-2">
+      <div style={{ marginTop: '8px' }}>
         <FolioHeader
           numeroFolio={numeroFolio}
           estado={estadoCotizacion}
@@ -47,86 +49,109 @@ export default function EstadoPage() {
           fechaActualizacion={fechaUltimaActualizacion}
         />
 
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="border p-6" style={{ borderColor: '#1E1E2A', backgroundColor: '#111118' }}>
-            <p className="text-xs uppercase tracking-widest mb-3" style={{ color: '#6B6B7A' }}>Progreso</p>
-            <div className="font-mono text-5xl font-medium" style={{ color: '#F5F5F0' }}>
+        {/* ── Metrics ── */}
+        <div
+          className="grid grid-cols-1 md:grid-cols-3"
+          style={{ gap: '16px', marginTop: '32px' }}
+        >
+          {/* Progreso */}
+          <Card style={{ padding: '24px' }}>
+            <p className="metric-label">Progreso</p>
+            <div className="metric-value">
               {porcentajeProgreso}
-              <span className="text-2xl" style={{ color: '#6B6B7A' }}>%</span>
+              <span className="metric-value-muted" style={{ fontSize: '1.5rem' }}>%</span>
             </div>
-            <div className="mt-4 h-1 rounded" style={{ backgroundColor: '#1E1E2A' }}>
+            <div className="progress-track">
               <div
-                className="h-1 rounded transition-all duration-700"
-                style={{ width: `${porcentajeProgreso}%`, backgroundColor: '#00D9A3' }}
+                className="progress-fill"
+                style={{ width: `${porcentajeProgreso}%` }}
               />
             </div>
-          </div>
+          </Card>
 
-          <div className="border p-6" style={{ borderColor: '#1E1E2A', backgroundColor: '#111118' }}>
-            <p className="text-xs uppercase tracking-widest mb-3" style={{ color: '#6B6B7A' }}>Calculable</p>
+          {/* Calculable */}
+          <Card style={{ padding: '24px' }}>
+            <p className="metric-label">Calculable</p>
             <div
-              className="font-mono text-5xl font-medium"
-              style={{ color: esCalculable ? '#00D9A3' : '#6B6B7A' }}
+              className="metric-value"
+              style={{ color: esCalculable ? 'var(--accent)' : 'var(--muted)' }}
             >
               {esCalculable ? 'Sí' : 'No'}
             </div>
-            <p className="text-xs mt-4" style={{ color: '#6B6B7A' }}>
-              {esCalculable ? 'Listo para calcular prima' : 'Completa las secciones pendientes'}
+            <p
+              style={{
+                fontSize: '0.75rem',
+                color: 'var(--muted)',
+                marginTop: '16px',
+                lineHeight: 1.5,
+              }}
+            >
+              {esCalculable
+                ? 'Listo para calcular prima'
+                : 'Completa las secciones pendientes'}
             </p>
-          </div>
+          </Card>
 
-          <div className="border p-6" style={{ borderColor: '#1E1E2A', backgroundColor: '#111118' }}>
-            <p className="text-xs uppercase tracking-widest mb-3" style={{ color: '#6B6B7A' }}>Secciones</p>
-            <div className="space-y-2 mt-2">
+          {/* Secciones */}
+          <Card style={{ padding: '24px' }}>
+            <p className="metric-label">Secciones</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
               {Object.entries(seccionesCompletadas).map(([k, v]) => (
                 <div key={k} className="flex justify-between items-center">
-                  <span className="text-xs font-mono" style={{ color: '#6B6B7A' }}>{k}</span>
-                  <span className="text-xs font-mono" style={{ color: v ? '#00D9A3' : '#1E1E2A' }}>
+                  <span
+                    className="mono-display"
+                    style={{ fontSize: '0.75rem', color: 'var(--muted)', letterSpacing: '0.02em' }}
+                  >
+                    {k}
+                  </span>
+                  <span
+                    className="mono-display"
+                    style={{
+                      fontSize: '0.75rem',
+                      color: v ? 'var(--accent)' : 'var(--border-2)',
+                    }}
+                  >
                     {v ? '✓' : '○'}
                   </span>
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
         </div>
 
+        {/* ── Alertas ── */}
         {alertas && alertas.length > 0 && (
-          <div
-            className="mt-6 border p-5"
-            style={{ borderColor: 'rgba(245,166,35,0.2)', backgroundColor: 'rgba(245,166,35,0.05)' }}
-          >
-            <p className="text-xs uppercase tracking-widest mb-3" style={{ color: '#F5A623' }}>Pendiente</p>
-            <ul className="space-y-2">
+          <Card variant="warning" style={{ marginTop: '24px', padding: '20px' }}>
+            <p className="metric-label" style={{ color: 'var(--warning)', marginBottom: '12px' }}>
+              Pendiente
+            </p>
+            <ul style={{ display: 'flex', flexDirection: 'column', gap: '8px', listStyle: 'none', padding: 0, margin: 0 }}>
               {alertas.map((a) => (
-                <li key={a.mensaje} className="flex gap-3 text-sm" style={{ color: 'rgba(245,245,240,0.7)' }}>
-                  <span style={{ color: '#F5A623' }}>!</span>
+                <li key={a.mensaje} className="flex gap-3" style={{ fontSize: '0.8125rem', color: 'var(--cream)' }}>
+                  <span style={{ color: 'var(--warning)', flexShrink: 0 }}>!</span>
                   <span>{a.mensaje}</span>
                 </li>
               ))}
             </ul>
-          </div>
+          </Card>
         )}
 
-        <div className="mt-8 flex gap-4 flex-wrap">
-          <button
+        {/* ── Actions ── */}
+        <div className="flex gap-4 flex-wrap" style={{ marginTop: '32px' }}>
+          <Button
             onClick={() => router.push(`/cotizador/${folio}/datos-generales`)}
-            className="font-medium px-6 py-3 text-sm transition-colors"
-            style={{ backgroundColor: '#00D9A3', color: '#0A0A0F' }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#00A87E')}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#00D9A3')}
+            id="btn-continuar-cotizacion"
           >
             Continuar cotización →
-          </button>
+          </Button>
           {esCalculable && (
-            <button
+            <Button
+              variant="outline"
               onClick={() => router.push(`/cotizador/${folio}/calculo`)}
-              className="border px-6 py-3 text-sm transition-colors"
-              style={{ borderColor: '#00D9A3', color: '#00D9A3' }}
-              onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'rgba(0,217,163,0.05)')}
-              onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
+              id="btn-ir-calculo"
             >
               Ir al cálculo
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -136,28 +161,30 @@ export default function EstadoPage() {
 
 function LoadingState() {
   return (
-    <div className="flex items-center gap-3 py-20 font-mono text-sm" style={{ color: '#6B6B7A' }}>
-      <span className="animate-pulse">▊</span> Cargando folio...
+    <div
+      className="flex items-center gap-3"
+      style={{ padding: '80px 0', fontFamily: 'var(--font-mono)', fontSize: '0.8125rem', color: 'var(--muted)' }}
+    >
+      <span style={{ animation: 'pulse 1.5s cubic-bezier(0.4,0,0.6,1) infinite' }}>▊</span>
+      Cargando folio…
     </div>
   );
 }
 
 function ErrorState({ msg }: Readonly<{ msg: string }>) {
   return (
-    <div
-      className="border p-6 mt-10"
-      style={{ borderColor: 'rgba(255,77,77,0.3)', backgroundColor: 'rgba(255,77,77,0.05)', color: '#FF4D4D' }}
-    >
-      <p className="font-mono text-sm">{msg}</p>
+    <Card variant="danger" style={{ padding: '24px', marginTop: '40px' }}>
+      <p className="mono-display" style={{ fontSize: '0.8125rem', color: 'var(--danger)' }}>
+        {msg}
+      </p>
       <a
         href="/"
-        className="text-xs underline mt-3 block"
-        style={{ color: '#6B6B7A' }}
-        onMouseEnter={e => (e.currentTarget.style.color = '#F5F5F0')}
-        onMouseLeave={e => (e.currentTarget.style.color = '#6B6B7A')}
+        className="nav-link"
+        style={{ display: 'block', marginTop: '12px', fontSize: '0.75rem' }}
+        id="link-error-volver"
       >
         ← Volver al inicio
       </a>
-    </div>
+    </Card>
   );
 }

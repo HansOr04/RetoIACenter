@@ -19,28 +19,45 @@ export function StepIndicator({ current }: Readonly<{ current: number }>) {
           <div key={step.id} className="flex items-start flex-1 min-w-0">
             <div className="flex flex-col items-center flex-1">
               <div
-                className={`
-                  w-8 h-8 rounded-full border flex items-center justify-center
-                  font-mono text-xs font-medium transition-all duration-300
-                  ${done   ? 'bg-accent border-accent text-bg' : ''}
-                  ${active ? 'bg-surface border-accent text-accent' : ''}
-                  ${!done && !active ? 'bg-surface border-border text-muted' : ''}
-                `}
+                className={[
+                  'step-circle',
+                  done ? 'is-done' : '',
+                  active ? 'is-active' : '',
+                ].filter(Boolean).join(' ')}
               >
-                {done ? '✓' : step.id}
+                {done ? (
+                  <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+                    <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                ) : (
+                  step.id
+                )}
               </div>
               <div className="mt-2 text-center">
                 <div
-                  className={`text-xs font-medium ${active ? 'text-cream' : done ? 'text-accent' : 'text-muted'}`}
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 500,
+                    color: active ? 'var(--cream)' : done ? 'var(--accent)' : 'var(--muted)',
+                  }}
                 >
                   {step.label}
                 </div>
-                <div className="text-xs text-muted hidden sm:block">{step.sublabel}</div>
+                <div
+                  className="hidden sm:block"
+                  style={{ fontSize: '0.6875rem', color: 'var(--muted)', marginTop: 2 }}
+                >
+                  {step.sublabel}
+                </div>
               </div>
             </div>
             {i < STEPS.length - 1 && (
               <div
-                className={`h-px w-full mt-4 transition-all duration-500 ${done ? 'bg-accent' : 'bg-border'}`}
+                className={`h-px w-full mt-4 transition-all duration-500 ${done ? '' : ''}`}
+                style={{
+                  backgroundColor: done ? 'var(--accent)' : 'var(--border)',
+                  transition: 'background-color 500ms ease',
+                }}
               />
             )}
           </div>
