@@ -352,7 +352,6 @@ export default function UbicacionesPage() {
             </button>
           </div>
         </form>
-      </div>
     </div>
   );
 }

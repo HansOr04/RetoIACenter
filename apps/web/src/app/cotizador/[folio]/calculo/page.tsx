@@ -91,7 +91,6 @@ export default function CalculoPage() {
             onRecalcular={() => setResult(null)}
           />
         )}
-      </div>
     </div>
   );
 }
