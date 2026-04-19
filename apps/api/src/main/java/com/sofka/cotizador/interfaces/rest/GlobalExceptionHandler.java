@@ -1,8 +1,10 @@
 package com.sofka.cotizador.interfaces.rest;
 
+import com.sofka.cotizador.domain.exception.CoberturaReglaVioladaException;
 import com.sofka.cotizador.domain.exception.CoreServiceUnavailableException;
 import com.sofka.cotizador.domain.exception.FolioNotFoundException;
 import com.sofka.cotizador.domain.exception.LayoutCapacityExceededException;
+import com.sofka.cotizador.domain.exception.SinUbicacionesCalculablesException;
 import com.sofka.cotizador.domain.exception.UbicacionNotFoundException;
 import com.sofka.cotizador.domain.exception.VersionConflictException;
 import org.springframework.http.HttpStatus;
@@ -85,6 +87,23 @@ public class GlobalExceptionHandler {
         problem.setProperty("currentVersion", ex.getCurrentVersion());
         problem.setProperty("receivedVersion", ex.getReceivedVersion());
         problem.setProperty("numeroFolio", ex.getNumeroFolio());
+        return problem;
+    }
+
+    @ExceptionHandler(CoberturaReglaVioladaException.class)
+    public ProblemDetail handleCoberturaReglaViolada(CoberturaReglaVioladaException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://cotizador.sofka.com/errors/coverage-rule-violated"));
+        problem.setTitle("Regla de cobertura violada");
+        return problem;
+    }
+
+    @ExceptionHandler(SinUbicacionesCalculablesException.class)
+    public ProblemDetail handleSinUbicacionesCalculables(SinUbicacionesCalculablesException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://cotizador.sofka.com/errors/no-calculable-locations"));
+        problem.setTitle("Sin ubicaciones calculables");
+        problem.setProperty("primasPorUbicacion", ex.getPrimasPorUbicacion());
         return problem;
     }
 }

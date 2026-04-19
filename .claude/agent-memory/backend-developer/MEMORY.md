@@ -1,2 +1,3 @@
 - [HU-003 Layout Ubicaciones implementation](project_hu003_layout.md) — decisions, JSONB pattern, domain invariant, wither propagation rules
 - [HU-004/005/009/010 Cotizacion aggregate implementation](project_hu004_010.md) — lazy creation, JSONB UbicacionJson, If-Match interceptor, ValidadorUbicacion as @Bean, ETag=version
+- [HU-006/007 Coverage Options and Premium Calculation](project_hu006_007.md) — CoberturaReglaVioladaException=422, catalog prefix pattern, Cotizacion 7-param constructor, CalculoPrimaService method-param DI
