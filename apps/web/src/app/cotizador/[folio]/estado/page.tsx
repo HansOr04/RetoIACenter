@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { foliosApi } from '@/lib/api';
 import { FolioHeader } from '@/components/FolioHeader';
-import { StepIndicator } from '@/components/StepIndicator';
 
 interface EstadoData {
   numeroFolio: string;
@@ -40,9 +39,7 @@ export default function EstadoPage() {
 
   return (
     <div>
-      <StepIndicator current={1} />
-
-      <div className="mt-10">
+      <div className="mt-2">
         <FolioHeader
           numeroFolio={numeroFolio}
           estado={estadoCotizacion}

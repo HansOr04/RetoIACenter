@@ -5,6 +5,6 @@ ALTER TABLE folios
   ADD COLUMN idempotency_key     VARCHAR(100) UNIQUE,
   ADD COLUMN tipo_negocio        VARCHAR(50),
   ADD COLUMN layout_ubicaciones  JSONB,
-  ADD COLUMN datos_generales     JSONB NOT NULL DEFAULT '{}'::jsonb;
+  ADD COLUMN datos_generales     JSONB;
 
 CREATE INDEX idx_folios_idempotency ON folios(idempotency_key);

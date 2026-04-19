@@ -1,50 +1,82 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { foliosApi, quotesApi } from '@/lib/api';
-import { StepIndicator } from '@/components/StepIndicator';
 
-const COBERTURAS_DISPONIBLES = [
-  { id: 'INCENDIO',      label: 'Incendio y Líneas Aliadas',  descripcion: 'Cubre daños por incendio, rayo y explosión' },
-  { id: 'ROBO',          label: 'Robo y Asalto',              descripcion: 'Cubre hurto calificado y robo con violencia' },
-  { id: 'RC',            label: 'Responsabilidad Civil',      descripcion: 'Daños a terceros por negligencia' },
-  { id: 'EQUIPO_ELECT',  label: 'Equipo Electrónico',         descripcion: 'Daños a equipos de cómputo y telecomunicaciones' },
-  { id: 'LUCRO_CESANTE', label: 'Lucro Cesante',              descripcion: 'Pérdida de ingresos por siniestro cubierto' },
-  { id: 'TODO_RIESGO',   label: 'Todo Riesgo Accidental',     descripcion: 'Cobertura amplia contra daños accidentales' },
-] as const;
+interface CoverageOptions {
+  incendioEdificios: boolean;
+  incendioContenidos: boolean;
+  extensionCobertura: boolean;
+  catTev: boolean;
+  catFhm: boolean;
+  remocionEscombros: boolean;
+  gastosExtraordinarios: boolean;
+  perdidaRentas: boolean;
+  bi: boolean;
+  equipoElectronico: boolean;
+  robo: boolean;
+  dineroValores: boolean;
+  vidrios: boolean;
+  anunciosLuminosos: boolean;
+}
+
+const COVERAGE_LABELS: { key: keyof CoverageOptions; label: string; desc: string }[] = [
+  { key: 'incendioEdificios',     label: 'Incendio Edificios',       desc: 'Daños al edificio por incendio, rayo o explosión' },
+  { key: 'incendioContenidos',    label: 'Incendio Contenidos',      desc: 'Mercancía, mobiliario y equipo' },
+  { key: 'extensionCobertura',    label: 'Extensión de Cobertura',   desc: 'Coberturas adicionales sobre incendio básico' },
+  { key: 'catTev',                label: 'Catástrofe TEV',           desc: 'Terrorismo, explosión y vandalismo' },
+  { key: 'catFhm',                label: 'Catástrofe FHM',           desc: 'Huracán, inundación y fenómenos hidrometeorológicos' },
+  { key: 'remocionEscombros',     label: 'Remoción de Escombros',    desc: 'Gastos de demolición y remoción post-siniestro' },
+  { key: 'gastosExtraordinarios', label: 'Gastos Extraordinarios',   desc: 'Gastos para restablecer operaciones' },
+  { key: 'perdidaRentas',         label: 'Pérdida de Rentas',        desc: 'Lucro cesante por renta de inmueble' },
+  { key: 'bi',                    label: 'Business Interruption',    desc: 'Pérdida de utilidades por interrupción del negocio' },
+  { key: 'equipoElectronico',     label: 'Equipo Electrónico',       desc: 'Equipos de cómputo y telecomunicaciones' },
+  { key: 'robo',                  label: 'Robo y Asalto',            desc: 'Hurto calificado y robo con violencia' },
+  { key: 'dineroValores',         label: 'Dinero y Valores',         desc: 'Pérdida de efectivo y títulos valor' },
+  { key: 'vidrios',               label: 'Vidrios',                  desc: 'Rotura accidental de cristales y vidrios' },
+  { key: 'anunciosLuminosos',     label: 'Anuncios Luminosos',       desc: 'Letreros y anuncios luminosos exteriores' },
+];
+
+const DEFAULTS: CoverageOptions = {
+  incendioEdificios: true, incendioContenidos: false, extensionCobertura: false,
+  catTev: false, catFhm: false, remocionEscombros: false, gastosExtraordinarios: false,
+  perdidaRentas: false, bi: false, equipoElectronico: false, robo: false,
+  dineroValores: false, vidrios: false, anunciosLuminosos: false,
+};
 
 export default function CoberturasPage() {
   const { folio } = useParams<{ folio: string }>();
   const router = useRouter();
-  const [saving, setSaving] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
-  const [selected, setSelected] = useState<Set<string>>(new Set(['INCENDIO']));
-  const [factorComercial, setFactorComercial] = useState<string>('1.0');
+  const [version, setVersion] = useState<number | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [options, setOptions] = useState<CoverageOptions>({ ...DEFAULTS });
 
-  function toggle(id: string) {
-    setSelected(prev => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
+  useEffect(() => {
+    foliosApi.getEstado(folio)
+      .then((e: unknown) => setVersion((e as { version: number }).version))
+      .catch(() => setError('No se pudo cargar el folio'));
+  }, [folio]);
+
+  const selectedCount = Object.values(options).filter(Boolean).length;
+
+  function toggle(key: keyof CoverageOptions) {
+    setOptions(prev => ({ ...prev, [key]: !prev[key] }));
+    setError('');
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (selected.size === 0) { setError('Selecciona al menos una cobertura'); return; }
+    if (selectedCount === 0) { setError('Selecciona al menos una cobertura'); return; }
+    if (version === null) { setError('Cargando folio, intenta de nuevo'); return; }
     setSaving(true);
     setError('');
     try {
-      const estado = await foliosApi.getEstado(folio) as { version: number };
-      await quotesApi.putCoberturas(folio, estado.version, {
-        coberturas: Array.from(selected),
-        factorComercial: parseFloat(factorComercial) || 1.0,
-      });
+      await quotesApi.putCoberturas(folio, version, options);
       router.push(`/cotizador/${folio}/calculo`);
     } catch (err: unknown) {
-      const e = err as { detail?: string };
-      setError(e.detail || 'Error al guardar coberturas');
+      const e = err as { detail?: string; title?: string };
+      setError(e.detail ?? e.title ?? 'Error al guardar coberturas');
     } finally {
       setSaving(false);
     }
@@ -52,93 +84,69 @@ export default function CoberturasPage() {
 
   return (
     <div>
-      <StepIndicator current={5} />
-      <div className="mt-10">
-        <h1 className="font-serif text-3xl mb-1" style={{ color: '#F5F5F0' }}>Coberturas</h1>
-        <p className="text-sm mb-8" style={{ color: '#6B6B7A' }}>
-          Folio <span className="font-mono" style={{ color: '#00D9A3' }}>{folio}</span>
+      <div className="mb-8">
+        <h1 className="text-2xl font-semibold mb-1" style={{ color: '#F5F5F0' }}>Coberturas</h1>
+        <p className="text-sm" style={{ color: '#6B6B7A' }}>
+          Selecciona las coberturas que aplican para este folio.{' '}
+          {selectedCount > 0 && (
+            <span style={{ color: '#00D9A3' }}>{selectedCount} seleccionada{selectedCount !== 1 ? 's' : ''}</span>
+          )}
         </p>
+      </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-            {COBERTURAS_DISPONIBLES.map(cob => {
-              const isSelected = selected.has(cob.id);
-              return (
-                <label
-                  key={cob.id}
-                  className="flex items-start gap-4 p-5 border cursor-pointer transition-colors"
+      <form onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+          {COVERAGE_LABELS.map(({ key, label, desc }) => {
+            const on = options[key];
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => toggle(key)}
+                className="flex items-center gap-3 px-4 py-3.5 border text-left w-full transition-all"
+                style={{
+                  borderColor: on ? '#00D9A3' : '#1E1E2A',
+                  backgroundColor: on ? 'rgba(0,217,163,0.07)' : '#0D0D13',
+                }}
+              >
+                {/* Checkbox indicator */}
+                <span
+                  className="flex-shrink-0 w-5 h-5 rounded-sm border flex items-center justify-center transition-all"
                   style={{
-                    borderColor: isSelected ? '#00D9A3' : '#1E1E2A',
-                    backgroundColor: isSelected ? 'rgba(0,217,163,0.05)' : '#111118',
+                    borderColor: on ? '#00D9A3' : '#2A2A3A',
+                    backgroundColor: on ? '#00D9A3' : 'transparent',
                   }}
                 >
-                  <div
-                    className="mt-0.5 w-4 h-4 border flex-shrink-0 flex items-center justify-center transition-colors"
-                    style={{
-                      backgroundColor: isSelected ? '#00D9A3' : 'transparent',
-                      borderColor: isSelected ? '#00D9A3' : '#1E1E2A',
-                    }}
-                    onClick={() => toggle(cob.id)}
-                  >
-                    {isSelected && <span className="text-xs" style={{ color: '#0A0A0F' }}>✓</span>}
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium" style={{ color: '#F5F5F0' }}>{cob.label}</div>
-                    <div className="text-xs mt-1" style={{ color: '#6B6B7A' }}>{cob.descripcion}</div>
-                  </div>
-                </label>
-              );
-            })}
-          </div>
+                  {on && (
+                    <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                      <path d="M1 4l3 3 5-6" stroke="#0A0A0F" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  )}
+                </span>
+                <span>
+                  <span className="block text-sm font-medium" style={{ color: on ? '#F5F5F0' : '#9B9BAA' }}>{label}</span>
+                  <span className="block text-xs mt-0.5" style={{ color: '#4A4A5A' }}>{desc}</span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
 
-          <div className="max-w-xs mb-8">
-            <label className="block text-xs uppercase tracking-widest mb-2" style={{ color: '#6B6B7A' }}>
-              Factor comercial
-            </label>
-            <input
-              type="number"
-              step="0.01"
-              min="0.5"
-              max="3"
-              value={factorComercial}
-              onChange={e => setFactorComercial(e.target.value)}
-              className="w-full border font-mono text-lg px-4 py-3 focus:outline-none transition-colors"
-              style={{ backgroundColor: '#111118', borderColor: '#1E1E2A', color: '#F5F5F0' }}
-              onFocus={e => (e.currentTarget.style.borderColor = '#00D9A3')}
-              onBlur={e => (e.currentTarget.style.borderColor = '#1E1E2A')}
-            />
-            <p className="text-xs mt-1" style={{ color: '#6B6B7A' }}>
-              Prima comercial = prima neta × factor
-            </p>
+        {error && (
+          <div className="border-l-2 px-4 py-3 text-sm mb-6" style={{ borderColor: '#FF4D4D', backgroundColor: 'rgba(255,77,77,0.06)', color: '#FF4D4D' }}>
+            {error}
           </div>
+        )}
 
-          {error && (
-            <div
-              className="border text-sm px-4 py-3 mb-6"
-              style={{
-                borderColor: 'rgba(255,77,77,0.3)',
-                backgroundColor: 'rgba(255,77,77,0.05)',
-                color: '#FF4D4D',
-              }}
-            >
-              {error}
-            </div>
-          )}
-
-          <div className="flex gap-4">
-            <button
-              type="submit"
-              disabled={saving}
-              className="font-medium px-8 py-3 text-sm transition-colors disabled:opacity-50"
-              style={{ backgroundColor: '#00D9A3', color: '#0A0A0F' }}
-              onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#00A87E')}
-              onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#00D9A3')}
-            >
-              {saving ? 'Guardando...' : 'Continuar al cálculo →'}
-            </button>
-          </div>
-        </form>
-      </div>
+        <button
+          type="submit"
+          disabled={saving || selectedCount === 0 || version === null}
+          className="px-8 py-3 text-sm font-semibold transition-colors disabled:opacity-40 hover:opacity-90"
+          style={{ backgroundColor: '#00D9A3', color: '#0A0A0F' }}
+        >
+          {saving ? 'Guardando...' : 'Continuar al cálculo →'}
+        </button>
+      </form>
     </div>
   );
 }

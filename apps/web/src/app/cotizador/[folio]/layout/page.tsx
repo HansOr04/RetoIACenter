@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { foliosApi } from '@/lib/api';
-import { StepIndicator } from '@/components/StepIndicator';
 
 const SECCIONES = [
   { key: 'datosTecnicos', label: 'Datos técnicos' },
@@ -53,16 +52,14 @@ export default function LayoutPage() {
 
   return (
     <div>
-      <StepIndicator current={3} />
-
-      <div className="mt-10 max-w-lg">
-        <h1 className="font-serif text-3xl mb-1" style={{ color: '#F5F5F0' }}>
-          Layout de ubicaciones
-        </h1>
-        <p className="text-sm mb-8" style={{ color: '#6B6B7A' }}>
-          Folio <span className="font-mono" style={{ color: '#00D9A3' }}>{folio}</span>
+      <div className="mb-8">
+        <h1 className="text-2xl font-semibold mb-1" style={{ color: '#F5F5F0' }}>Layout de ubicaciones</h1>
+        <p className="text-sm" style={{ color: '#6B6B7A' }}>
+          Configura cuántas ubicaciones tendrá la póliza y qué secciones aplican.
         </p>
+      </div>
 
+      <div className="max-w-lg">
         <form onSubmit={handleSubmit} className="space-y-8">
           <div>
             <label className="block text-xs uppercase tracking-widest mb-4" style={{ color: '#6B6B7A' }}>

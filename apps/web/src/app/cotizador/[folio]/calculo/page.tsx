@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { foliosApi, quotesApi } from '@/lib/api';
-import { StepIndicator } from '@/components/StepIndicator';
 import { formatCurrency } from '@/lib/utils';
 
 interface DesglosePorUbicacion {
@@ -43,12 +42,12 @@ export default function CalculoPage() {
 
   return (
     <div>
-      <StepIndicator current={6} />
-      <div className="mt-10">
-        <h1 className="font-serif text-3xl mb-1" style={{ color: '#F5F5F0' }}>Cálculo de prima</h1>
-        <p className="text-sm mb-8" style={{ color: '#6B6B7A' }}>
-          Folio <span className="font-mono" style={{ color: '#00D9A3' }}>{folio}</span>
+      <div className="mb-8">
+        <h1 className="text-2xl font-semibold mb-1" style={{ color: '#F5F5F0' }}>Cálculo de prima</h1>
+        <p className="text-sm" style={{ color: '#6B6B7A' }}>
+          Ejecuta el cálculo para obtener la prima neta y comercial.
         </p>
+      </div>
 
         {!result ? (
           <div className="max-w-md">

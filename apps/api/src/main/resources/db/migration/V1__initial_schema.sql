@@ -2,14 +2,11 @@
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- ─── Estados del folio ──────────────────────────────────────────────────────
-CREATE TYPE folio_status AS ENUM ('BORRADOR', 'CALCULADO', 'EMITIDO', 'CANCELADO');
-
 -- ─── Folios de cotización ────────────────────────────────────────────────────
 CREATE TABLE folios (
     id                       UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     numero_folio             VARCHAR(20) NOT NULL UNIQUE,
-    status                   folio_status NOT NULL DEFAULT 'BORRADOR',
+    status                   VARCHAR(20) NOT NULL DEFAULT 'BORRADOR',
 
     -- Datos generales
     rfc_contratante          VARCHAR(13),
