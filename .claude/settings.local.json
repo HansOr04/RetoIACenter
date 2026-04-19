@@ -9,7 +9,9 @@
       "Bash(java -version)",
       "Bash(mvn -version)",
       "Bash(grep -E \"^\\\\\\\\[ERROR\\\\\\\\]\")",
-      "Bash(mvn test *)"
+      "Bash(mvn test *)",
+      "Bash(docker compose *)",
+      "Bash(xargs grep *)"
     ]
   }
 }

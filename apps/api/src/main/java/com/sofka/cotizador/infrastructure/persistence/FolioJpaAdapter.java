@@ -6,6 +6,7 @@ import com.sofka.cotizador.domain.port.FolioRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class FolioJpaAdapter implements FolioRepository {
@@ -35,7 +36,7 @@ public class FolioJpaAdapter implements FolioRepository {
 
     private FolioJpaEntity toEntity(Folio folio) {
         return FolioJpaEntity.builder()
-                .id(folio.getId())
+                .id(UUID.fromString(folio.getId()))
                 .numeroFolio(folio.getNumeroFolio())
                 .idempotencyKey(folio.getIdempotencyKey())
                 .status(folio.getEstado().name())
@@ -51,7 +52,7 @@ public class FolioJpaAdapter implements FolioRepository {
 
     private Folio toDomain(FolioJpaEntity entity) {
         return Folio.builder()
-                .id(entity.getId())
+                .id(entity.getId().toString())
                 .numeroFolio(entity.getNumeroFolio())
                 .idempotencyKey(entity.getIdempotencyKey())
                 .estado(EstadoCotizacion.valueOf(entity.getStatus()))

@@ -91,7 +91,7 @@ CREATE TABLE catalogo_cp_zonas (
 -- ─── Dimensión zona TEV (Terrorismo, Explosión, Vandalismo) ─────────────────
 CREATE TABLE dim_zona_tev (
     id                       SERIAL PRIMARY KEY,
-    zona_codigo              VARCHAR(10) NOT NULL UNIQUE,
+    zona_codigo              VARCHAR(15) NOT NULL UNIQUE,
     descripcion              VARCHAR(100),
     factor_tev               NUMERIC(10, 6) NOT NULL
 );
@@ -99,7 +99,7 @@ CREATE TABLE dim_zona_tev (
 -- ─── Dimensión zona FHM ─────────────────────────────────────────────────────
 CREATE TABLE dim_zona_fhm (
     id                       SERIAL PRIMARY KEY,
-    zona_codigo              VARCHAR(10) NOT NULL UNIQUE,
+    zona_codigo              VARCHAR(15) NOT NULL UNIQUE,
     descripcion              VARCHAR(100),
     factor_fhm               NUMERIC(10, 6) NOT NULL
 );

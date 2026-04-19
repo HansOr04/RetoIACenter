@@ -1,8 +1,9 @@
 package com.sofka.cotizador.infrastructure.persistence;
 
-import com.sofka.cotizador.infrastructure.persistence.converter.CotizacionDatosConverter;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -32,7 +33,7 @@ public class CotizacionJpaEntity {
     @Column(name = "prima_comercial", precision = 15, scale = 2)
     private BigDecimal primaComercial;
 
-    @Convert(converter = CotizacionDatosConverter.class)
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "datos", columnDefinition = "jsonb", nullable = false)
     private DatosCotizacion datos;
 }

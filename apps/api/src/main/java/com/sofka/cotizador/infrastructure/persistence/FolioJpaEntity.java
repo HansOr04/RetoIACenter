@@ -2,12 +2,13 @@ package com.sofka.cotizador.infrastructure.persistence;
 
 import com.sofka.cotizador.domain.model.DatosGenerales;
 import com.sofka.cotizador.domain.model.LayoutUbicaciones;
-import com.sofka.cotizador.infrastructure.persistence.converter.DatosGeneralesConverter;
-import com.sofka.cotizador.infrastructure.persistence.converter.LayoutUbicacionesConverter;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "folios")
@@ -19,8 +20,8 @@ import java.time.LocalDateTime;
 public class FolioJpaEntity {
 
     @Id
-    @Column(name = "id", nullable = false, updatable = false)
-    private String id;
+    @Column(name = "id", nullable = false, updatable = false, columnDefinition = "uuid")
+    private UUID id;
 
     @Column(name = "numero_folio", unique = true, nullable = false, length = 20)
     private String numeroFolio;
@@ -46,11 +47,11 @@ public class FolioJpaEntity {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @Convert(converter = DatosGeneralesConverter.class)
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "datos_generales", columnDefinition = "jsonb")
     private DatosGenerales datosGenerales;
 
-    @Convert(converter = LayoutUbicacionesConverter.class)
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "layout_ubicaciones", columnDefinition = "jsonb")
     private LayoutUbicaciones layoutUbicaciones;
 }
