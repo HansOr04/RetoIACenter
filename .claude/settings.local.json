@@ -3,7 +3,13 @@
     "allow": [
       "Bash(git config *)",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(mvn -pl apps/api compile -q)",
+      "Bash(mvn compile *)",
+      "Bash(java -version)",
+      "Bash(mvn -version)",
+      "Bash(grep -E \"^\\\\\\\\[ERROR\\\\\\\\]\")",
+      "Bash(mvn test *)"
     ]
   }
 }

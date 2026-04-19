@@ -51,8 +51,6 @@ class EditarUbicacionPuntualUseCaseTest {
         Cotizacion cotizacion = cotizacionConUbicacion(folio, 2);
 
         when(cotizacionRepository.findByNumeroFolio(folio)).thenReturn(Optional.of(cotizacion));
-        when(validadorCodigoPostalService.validarCodigoPostal("090001"))
-                .thenReturn(Optional.of(new ZonaCatastrofica("TEV-A", "FHM-1")));
         when(cotizacionRepository.save(any(Cotizacion.class))).thenAnswer(inv -> inv.getArgument(0));
 
         EditarUbicacionCommand command = new EditarUbicacionCommand(
@@ -106,8 +104,6 @@ class EditarUbicacionPuntualUseCaseTest {
         Cotizacion cotizacion = cotizacionConUbicacion(folio, 2);
 
         when(cotizacionRepository.findByNumeroFolio(folio)).thenReturn(Optional.of(cotizacion));
-        when(validadorCodigoPostalService.validarCodigoPostal("090001"))
-                .thenReturn(Optional.of(new ZonaCatastrofica("TEV-A", "FHM-1")));
         when(cotizacionRepository.save(any(Cotizacion.class))).thenAnswer(inv -> inv.getArgument(0));
 
         EditarUbicacionCommand command = new EditarUbicacionCommand(

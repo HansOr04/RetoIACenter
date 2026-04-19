@@ -58,8 +58,8 @@ public class RegistrarUbicacionUseCase {
                         LocalDateTime.now()
                 ));
 
-        if (cotizacion.capacidadExcedida(layout.getNumeroUbicaciones())) {
-            throw new LayoutCapacityExceededException(command.numeroFolio(), layout.getNumeroUbicaciones());
+        if (cotizacion.capacidadExcedida(layout.numeroUbicaciones())) {
+            throw new LayoutCapacityExceededException(command.numeroFolio(), layout.numeroUbicaciones());
         }
 
         Optional<ZonaCatastrofica> zonaOpt =
