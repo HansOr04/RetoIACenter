@@ -7,27 +7,27 @@
 ───────────────────────────────────────────── */
 :root {
   /* Surfaces */
-  --bg:       #09090E;
-  --surface:  #101017;
-  --surface-2:#16161F;
-  --border:   #1F1F2E;
-  --border-2: #2A2A3C;
+  --bg:       #F4F6FB;
+  --surface:  #FFFFFF;
+  --surface-2:#F8FAFF;
+  --border:   #E2E6EF;
+  --border-2: #D1D9E8;
 
   /* Text */
-  --cream:   #F2F2ED;
-  --muted:   #6A6A7A;
-  --muted-2: #9898A8;
+  --cream:   #0F1520; /* Main body text */
+  --muted:   #6B7B94; /* Secondary text */
+  --muted-2: #8A94A8; /* Tertiary text / placeholders */
 
   /* Accent — single CTA color */
   --accent:     #00C896;
-  --accent-dim: #009E77;
-  --accent-bg:  rgba(0, 200, 150, 0.06);
+  --accent-dim: #00B085;
+  --accent-bg:  rgba(0, 200, 150, 0.08);
 
   /* Semantic */
-  --danger:  #F04447;
-  --danger-bg: rgba(240, 68, 71, 0.06);
-  --warning: #E8A020;
-  --warning-bg: rgba(232, 160, 32, 0.06);
+  --danger:  #E53E3E;
+  --danger-bg: rgba(229, 62, 62, 0.08);
+  --warning: #DD6B20;
+  --warning-bg: rgba(221, 107, 32, 0.08);
   --success: #00C896;
 
   /* Typography */
@@ -48,18 +48,18 @@
 
 /* Tailwind theme mapping */
 @theme {
-  --color-bg:       #09090E;
-  --color-surface:  #101017;
-  --color-surface-2:#16161F;
-  --color-border:   #1F1F2E;
-  --color-border-2: #2A2A3C;
+  --color-bg:       #F4F6FB;
+  --color-surface:  #FFFFFF;
+  --color-surface-2:#F8FAFF;
+  --color-border:   #E2E6EF;
+  --color-border-2: #D1D9E8;
   --color-accent:   #00C896;
-  --color-accent-dim:#009E77;
-  --color-cream:    #F2F2ED;
-  --color-muted:    #6A6A7A;
-  --color-muted-2:  #9898A8;
-  --color-danger:   #F04447;
-  --color-warning:  #E8A020;
+  --color-accent-dim:#00B085;
+  --color-cream:    #0F1520;
+  --color-muted:    #6B7B94;
+  --color-muted-2:  #8A94A8;
+  --color-danger:   #E53E3E;
+  --color-warning:  #DD6B20;
   --font-sans:      'Inter', system-ui, sans-serif;
   --font-mono:      'JetBrains Mono', ui-monospace, monospace;
   --font-serif:     'DM Serif Display', Georgia, serif;
@@ -198,7 +198,7 @@ body {
 /* Primary CTA */
 .btn-primary {
   background-color: var(--accent);
-  color: var(--bg);
+  color: #08120E; /* Dark text for high contrast on bright accent */
   border-color: var(--accent);
 }
 .btn-primary:hover:not(:disabled) {
@@ -353,8 +353,8 @@ select.input-field option {
 
 .badge-cream {
   color: var(--cream);
-  border-color: rgba(242, 242, 237, 0.2);
-  background-color: rgba(242, 242, 237, 0.04);
+  border-color: rgba(15, 21, 32, 0.15);
+  background-color: rgba(15, 21, 32, 0.04);
 }
 .badge-cream .badge-dot { background-color: var(--cream); }
 
