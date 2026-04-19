@@ -1,0 +1,3 @@
+- [Cotizador web stack](project_stack.md) — Next.js 15 + Tailwind v4 + React 19 + pnpm; NOT the Vite+CSS Modules stack in rules/frontend.md
+- [API environment variables](project_api_env.md) — DB_URL / DB_USER / DB_PASS / CORE_STUB_URL names for docker-compose alignment
+- [TypeScript strictness rules](feedback_typescript.md) — SonarQube S6759/S6754/S6479/S6438 fire on every write; apply proactively
