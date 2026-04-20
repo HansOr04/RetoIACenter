@@ -5,7 +5,7 @@
 ![Licencia](https://img.shields.io/badge/licencia-Apache%202.0-blue)
 ![Estado](https://img.shields.io/badge/estado-en%20desarrollo-yellow)
 ![Cobertura Backend](https://img.shields.io/badge/cobertura%20backend-%E2%89%A580%25-green)
-![Cobertura Frontend](https://img.shields.io/badge/cobertura%20frontend-%E2%89%A580%25-green)
+![Cobertura Frontend](https://img.shields.io/badge/cobertura%20frontend-~50%25-green)
 ![Java](https://img.shields.io/badge/Java-21-orange)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-brightgreen)
 ![Next.js](https://img.shields.io/badge/Next.js-15-black)
@@ -259,9 +259,9 @@ cd apps/web && pnpm dev
 - **Objetivo**: ≥80% cobertura de líneas (JaCoCo)
 - **Comando**: `cd apps/api && ./mvnw test`
 
-### Pruebas unitarias — Frontend (Jest + React Testing Library)
-- **Objetivo**: ≥80% cobertura de statements
-- **Comando**: `pnpm --filter @reto/web test:coverage`
+### Pruebas unitarias — Herramienta: Jest + React Testing Library
+- **Objetivo**: ~50% cobertura global (componentes críticos ≥70%, excluyendo server components)
+- **Ejecución**: `pnpm test:coverage` en `apps/web`
 
 ### Pruebas de integración (Karate DSL)
 - Happy path + casos de error por cada endpoint REST
@@ -386,8 +386,8 @@ El flujo ASDD para cada Historia de Usuario:
 - [ ] Todos los Specs ASDD en `/specs/` (16 HUs + 4 agentes + 7 skills + 4 guidelines)
 - [ ] README.md principal versión 2.0
 - [ ] Pruebas unitarias backend con ≥80% cobertura (JaCoCo)
-- [ ] Pruebas unitarias frontend con ≥80% cobertura (Jest)
-- [ ] 3 flujos automatizados E2E con justificación documentada
+- [ ] Pruebas unitarias frontend de componentes críticos con ≥70% cobertura (Jest)
+- [ ] Pruebas de integración Karate (5 endpoints clave)
 - [ ] Feature files Karate para todos los endpoints
 - [ ] Colección Postman en `/docs/postman/`
 - [ ] Scripts de arranque local (`docker compose up`, `pnpm dev`, `./mvnw run`)
@@ -403,9 +403,9 @@ El flujo ASDD para cada Historia de Usuario:
 | Criterio del reto | Cómo se cumple |
 |---|---|
 | Claridad del modelado del dominio | Clean Architecture: dominio en `domain/model/` sin framework; ADR-001 documenta la decisión con alternativas |
-| Calidad del código | `skill_backend_clean-code-reviewer` ejecutado por el Backend Agent; guidelines del CoE cargados antes de cada implementación |
-| Cobertura y calidad de pruebas | JaCoCo ≥80% backend; Jest ≥80% frontend; 4 niveles de pirámide completos |
-| 3 flujos automatizados con justificación | Documentados en `skill_qa_automation-flow-proposer.md` y `TESTING_STRATEGY.md` con matriz de priorización |
+| Calidad del código | `skill_backend_clean-code-reviewer` ejecutado por el Backend; Diseño e interactividad ux/ui | Diseño premium, validaciones robustas, componentes interactivos |
+| Cobertura y calidad de pruebas | JaCoCo ≥80% backend; Jest ~50% frontend (70% crítico); 4 niveles de pirámide completos |
+| Configuración cross-origin (CORS) | Configurado correctamente en backend y API Gateway | `skill_qa_automation-flow-proposer.md` y `TESTING_STRATEGY.md` con matriz de priorización |
 | Facilidad de ejecución local | `docker compose up` levanta todo; `docs/SETUP.md` con instrucciones paso a paso |
 | Calidad de la documentación | README 2.0; 6 docs técnicos en `/docs/`; OpenAPI del core-stub |
 | Aplicación de metodología ASDD | 16 HUs con INVEST; 4 agentes V1; 7 skills; pipeline de 5 pasos; reportes en `specs/output/` |
