@@ -131,6 +131,18 @@ export default function CoberturasPage() {
         </p>
       </div>
 
+      <div style={{
+        backgroundColor: 'rgba(0, 200, 150, 0.08)',
+        border: '1px solid rgba(0, 200, 150, 0.3)',
+        borderRadius: '8px', padding: '16px', marginBottom: '24px',
+        color: 'var(--cream)', fontSize: '0.875rem'
+      }}>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px', color: 'var(--accent)', fontWeight: 600 }}>
+          <IconShieldCheck /> Entiende las Coberturas
+        </div>
+        Aquí decides qué riesgos asume la aseguradora. <strong>¡Atención!</strong> Si activas catástrofes como <em>Catástrofe TEV</em> o <em>Catástrofe FHM</em>, el motor multiplicará matemáticamente la exposición basándose en el <strong>Código Postal</strong> de las ubicaciones que registraste antes, encareciendo sensiblemente la prima según el nivel de peligrosidad geográfica (zonas).
+      </div>
+
       <form onSubmit={handleSubmit}>
 
         <div style={{

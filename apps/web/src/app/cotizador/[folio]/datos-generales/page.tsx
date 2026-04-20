@@ -57,8 +57,8 @@ export default function DatosGeneralesPage() {
   const [apiError, setApiError] = useState('');
   const [form, setForm] = useState<FormState>({
     nombreTomador: '', rucCedula: '', correoElectronico: '',
-    telefonoContacto: '', tipoInmueble: 'LOCAL_COMERCIAL',
-    usoPrincipal: 'COMERCIAL', anoConstruccion: '', numeroPisos: '',
+    telefonoContacto: '', tipoInmueble: '',
+    usoPrincipal: '', anoConstruccion: '', numeroPisos: '',
     descripcion: '',
   });
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
@@ -68,6 +68,8 @@ export default function DatosGeneralesPage() {
     if (!form.nombreTomador.trim()) e.nombreTomador = 'Campo requerido';
     if (!form.rucCedula.trim()) e.rucCedula = 'Campo requerido';
     if (!form.correoElectronico.trim()) e.correoElectronico = 'Campo requerido';
+    if (!form.tipoInmueble) e.tipoInmueble = 'Requerido';
+    if (!form.usoPrincipal) e.usoPrincipal = 'Requerido';
     if (form.correoElectronico && !/\S+@\S+\.\S+/.test(form.correoElectronico))
       e.correoElectronico = 'Correo inválido';
     return e;
@@ -113,6 +115,18 @@ export default function DatosGeneralesPage() {
         <p className="page-subtitle" style={{ fontSize: '0.9375rem', color: 'var(--muted)' }}>
           Ingresa la información base del tomador del seguro y la caracterización principal del bien.
         </p>
+      </div>
+
+      <div style={{
+        backgroundColor: 'rgba(0, 200, 150, 0.08)',
+        border: '1px solid rgba(0, 200, 150, 0.3)',
+        borderRadius: '8px', padding: '16px', marginBottom: '24px',
+        color: 'var(--cream)', fontSize: '0.875rem'
+      }}>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px', color: 'var(--accent)', fontWeight: 600 }}>
+          <IconId /> ¿Por qué pedimos esto?
+        </div>
+        Los Datos Generales establecen el contrato base (Tomador) y validan el perfil de riesgo primario. Información falsa en el RUC/Cédula o Tipo de Inmueble impedirá la posterior emisión oficial de la póliza en el Core de la aseguradora.
       </div>
 
       <form onSubmit={handleSubmit}>
@@ -222,16 +236,18 @@ export default function DatosGeneralesPage() {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2" style={{ padding: '32px', gap: '24px' }}>
-              <Field id="tipoInmueble" label="Tipo de inmueble" required>
-                <Select icon={<IconBuilding />} {...fieldProps('tipoInmueble')}>
+              <Field id="tipoInmueble" label="Tipo de inmueble" required error={errors.tipoInmueble}>
+                <Select icon={<IconBuilding />} error={!!errors.tipoInmueble} {...fieldProps('tipoInmueble')}>
+                  <option value="" disabled>Seleccione...</option>
                   {TIPOS_INMUEBLE.map(t => (
                     <option key={t} value={t}>{t.replaceAll('_', ' ')}</option>
                   ))}
                 </Select>
               </Field>
 
-              <Field id="usoPrincipal" label="Uso principal" required>
-                <Select icon={<IconBriefcase />} {...fieldProps('usoPrincipal')}>
+              <Field id="usoPrincipal" label="Uso principal" required error={errors.usoPrincipal}>
+                <Select icon={<IconBriefcase />} error={!!errors.usoPrincipal} {...fieldProps('usoPrincipal')}>
+                  <option value="" disabled>Seleccione...</option>
                   {USOS.map(u => <option key={u} value={u}>{u}</option>)}
                 </Select>
               </Field>

@@ -34,14 +34,49 @@ const emptyUbicacion = (): UbicacionForm => ({
   ciudad: '',
   estado: '',
   municipio: '',
-  tipoConstructivo: 'MAMPOSTERIA',
-  valorEdificacion: '100000',
-  valorContenidos: '50000',
-  giro: { codigo: 'B1', descripcion: 'Oficinas', claveIncendio: 'B1' },
-  garantias: 'INCENDIO, TERREMOTO',
+  tipoConstructivo: '',
+  valorEdificacion: '',
+  valorContenidos: '',
+  giro: { codigo: '', descripcion: '', claveIncendio: '' },
+  garantias: '',
 });
 
-const TIPOS_CONSTRUCTIVOS = ['MAMPOSTERIA', 'CONCRETO', 'ACERO', 'MADERA', 'MIXTO'];
+const TIPOS_CONSTRUCTIVOS = [
+  { value: 'CONCRETO_ARMADO', label: 'Concreto Armado' },
+  { value: 'MAMPOSTERIA', label: 'Mampostería' },
+  { value: 'MADERA', label: 'Madera' }
+];
+
+const CODIGOS_POSTALES = [
+  { value: '170101', label: '170101 (Quito - La Mariscal)' },
+  { value: '170515', label: '170515 (Quito - Carcelén)' },
+  { value: '090101', label: '090101 (Guayaquil - Tarqui)' },
+  { value: '010101', label: '010101 (Cuenca - El Sagrario)' },
+  { value: '180101', label: '180101 (Ambato - La Matriz)' },
+  { value: '110101', label: '110101 (Loja - El Valle)' },
+  { value: '060101', label: '060101 (Riobamba - Lizarzaburu)' }
+];
+
+const CLAVES_INCENDIO = [
+  { value: 'A1', label: 'A1 - Riesgo Bajo' },
+  { value: 'B1', label: 'B1 - Oficinas / Comercio Básico' },
+  { value: 'B2', label: 'B2 - Restaurantes / Comercio Medio' },
+  { value: 'C1', label: 'C1 - Riesgo Industrial' }
+];
+
+const GARANTIAS = [
+  'INCENDIO_EDIFICIOS',
+  'INCENDIO_CONTENIDOS',
+  'EXTENSION_COBERTURA',
+  'TERRORISMO_TEV',
+  'HURACAN_FHM',
+  'REMOCION_ESCOMBROS',
+  'PERDIDA_RENTAS',
+  'ROBO_ASALTO',
+  'DINERO_VALORES',
+  'ROTURA_CRISTALES',
+  'EQUIPO_ELECTRONICO'
+];
 
 export default function UbicacionesPage() {
   const { folio } = useParams<{ folio: string }>();
@@ -121,6 +156,19 @@ export default function UbicacionesPage() {
         <p className="page-subtitle">Completa los datos de cada ubicación de la póliza.</p>
       </div>
 
+      <div style={{
+        backgroundColor: 'rgba(0, 200, 150, 0.08)',
+        border: '1px solid rgba(0, 200, 150, 0.3)',
+        borderRadius: '8px', padding: '16px', marginBottom: '24px',
+        color: 'var(--cream)', fontSize: '0.875rem'
+      }}>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px', color: 'var(--accent)', fontWeight: 600 }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+           Información de Catálogos
+        </div>
+        El cálculo de la prima es un modelo matemático estricto. La <strong>Clave de Incendio</strong> y el <strong>Tipo Constructivo</strong> definen la tasa base. El <strong>Código Postal</strong> determina las zonas de catástrofes sísmicas o hidrometeorológicas conectándose en tiempo real al Core (microservicio geográfico). Los <strong>Valores Asegurados</strong> son el multiplicador matemático final.
+      </div>
+
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
         {ubicaciones.map((u, i) => {
           const p = `ub${i}`;
@@ -161,13 +209,17 @@ export default function UbicacionesPage() {
                   />
                 </Field>
                 <Field id={`${p}-cp`} label="Código postal" required>
-                  <Input
+                  <Select
                     id={`${p}-cp`}
                     required
-                    placeholder="090001"
                     value={u.codigoPostal}
                     onChange={ev => updateField(i, 'codigoPostal', ev.target.value)}
-                  />
+                  >
+                    <option value="" disabled>Seleccione CP apoyado del Core...</option>
+                    {CODIGOS_POSTALES.map(c => (
+                      <option key={c.value} value={c.value}>{c.label}</option>
+                    ))}
+                  </Select>
                 </Field>
                 <Field id={`${p}-ciudad`} label="Ciudad">
                   <Input
@@ -205,8 +257,9 @@ export default function UbicacionesPage() {
                     value={u.tipoConstructivo}
                     onChange={ev => updateField(i, 'tipoConstructivo', ev.target.value)}
                   >
+                    <option value="" disabled>Seleccione Material...</option>
                     {TIPOS_CONSTRUCTIVOS.map(t => (
-                      <option key={t} value={t}>{t}</option>
+                      <option key={t.value} value={t.value}>{t.label}</option>
                     ))}
                   </Select>
                 </Field>
@@ -233,32 +286,36 @@ export default function UbicacionesPage() {
               {/* Sección: Giro comercial */}
               <SectionLabel style={{ marginBottom: '16px' }}>Giro comercial</SectionLabel>
               <div className="grid grid-cols-1 md:grid-cols-3" style={{ gap: '16px' }}>
-                <Field id={`${p}-gcod`} label="Código" required>
+                <Field id={`${p}-gcod`} label="Código Giro (Libre)" required>
                   <Input
                     id={`${p}-gcod`}
                     required
-                    placeholder="G001"
+                    placeholder="G01"
                     value={u.giro.codigo}
                     onChange={ev => updateGiro(i, 'codigo', ev.target.value)}
                   />
                 </Field>
-                <Field id={`${p}-gdesc`} label="Descripción" required>
+                <Field id={`${p}-gdesc`} label="Descripción Giro" required>
                   <Input
                     id={`${p}-gdesc`}
                     required
-                    placeholder="Comercio General"
+                    placeholder="Oficinas en general"
                     value={u.giro.descripcion}
                     onChange={ev => updateGiro(i, 'descripcion', ev.target.value)}
                   />
                 </Field>
                 <Field id={`${p}-ginc`} label="Clave incendio" required>
-                  <Input
+                  <Select
                     id={`${p}-ginc`}
                     required
-                    placeholder="INC-01"
                     value={u.giro.claveIncendio}
                     onChange={ev => updateGiro(i, 'claveIncendio', ev.target.value)}
-                  />
+                  >
+                    <option value="" disabled>Seleccione nivel del riesgo...</option>
+                    {CLAVES_INCENDIO.map(c => (
+                      <option key={c.value} value={c.value}>{c.label}</option>
+                    ))}
+                  </Select>
                 </Field>
               </div>
               {/* Sección: Otras garantías */}

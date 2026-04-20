@@ -273,10 +273,16 @@ function ResultadoCalculo({
         <Card variant="accent" style={{ padding: '24px' }}>
           <p className="metric-label" style={{ color: 'var(--accent)' }}>Prima neta</p>
           <p className="metric-value metric-value-accent mono-display">{formatCurrency(primaNeta)}</p>
+          <p style={{ fontSize: '0.75rem', color: 'var(--accent-dim)', marginTop: '8px', lineHeight: 1.4 }}>
+            Suma exacta de las tasas de riesgo multiplicadas por los valores asegurados. Excluye impuestos y gastos operativos.
+          </p>
         </Card>
         <Card style={{ padding: '24px' }}>
           <p className="metric-label">Prima comercial</p>
           <p className="metric-value mono-display">{formatCurrency(primaComercial)}</p>
+          <p style={{ fontSize: '0.75rem', color: 'var(--muted)', marginTop: '8px', lineHeight: 1.4 }}>
+            Prima final al cliente. Resulta de multiplicar la Prima Neta por el Factor de Gastos de la aseguradora.
+          </p>
         </Card>
         <Card style={{ padding: '24px' }}>
           <p className="metric-label">Factor de Gastos</p>
