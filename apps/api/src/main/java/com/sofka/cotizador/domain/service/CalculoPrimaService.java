@@ -6,14 +6,12 @@ import com.sofka.cotizador.domain.model.calculo.ParametrosCalculo;
 import com.sofka.cotizador.domain.model.calculo.PrimaPorUbicacion;
 import com.sofka.cotizador.domain.model.ubicacion.Ubicacion;
 import com.sofka.cotizador.domain.port.CatalogoTarifasRepository;
-import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.Stream;
 
-@Service
 public class CalculoPrimaService {
 
     private static final BigDecimal VALOR_ASEGURADO_DEFAULT = new BigDecimal("1000000.00");
