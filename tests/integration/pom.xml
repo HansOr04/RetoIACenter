@@ -11,7 +11,7 @@
     <description>Pruebas de integración con Karate DSL — Reto IA Center 2026</description>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <karate.version>1.4.1</karate.version>
@@ -19,7 +19,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.karatelabs</groupId>
+            <groupId>com.intuit.karate</groupId>
             <artifactId>karate-junit5</artifactId>
             <version>${karate.version}</version>
             <scope>test</scope>
