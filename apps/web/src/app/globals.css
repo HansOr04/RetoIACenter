@@ -527,3 +527,92 @@ select.input-field option {
   background-color: var(--accent);
   border-color: var(--accent);
 }
+
+/* ─────────────────────────────────────────────
+   INPUT WRAPPERS & INTERACTIVE STATES
+───────────────────────────────────────────── */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: var(--surface-2);
+  border: 1px solid var(--border);
+  transition: border-color 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
+  overflow: hidden;
+}
+
+.input-wrapper:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0, 200, 150, 0.12);
+  background-color: var(--surface);
+}
+
+.input-wrapper.is-error {
+  border-color: var(--danger);
+}
+
+.input-wrapper.is-error:focus-within {
+  box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.12);
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--muted-2);
+  pointer-events: none;
+  transition: color 200ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.input-wrapper:focus-within .input-icon {
+  color: var(--accent);
+}
+
+.input-wrapper.is-error .input-icon {
+  color: var(--danger);
+}
+
+/* Modifying base input-field when inside a wrapper */
+.input-wrapper > .input-field {
+  border: none;
+  background-color: transparent;
+  width: 100%;
+  padding-left: 38px;  /* space for the icon */
+}
+
+.input-wrapper > .input-field:focus {
+  outline: none; /* box-shadow is handled by wrapper */
+  border-color: transparent;
+}
+
+/* Textarea handling */
+.input-wrapper.textarea-wrapper {
+  align-items: flex-start;
+}
+.textarea-wrapper .input-icon {
+  top: 14px;
+}
+
+/* ─────────────────────────────────────────────
+   FLOATING FOOTER
+───────────────────────────────────────────── */
+.floating-footer {
+  position: sticky;
+  bottom: 0;
+  padding: 20px 40px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  margin-top: 40px;
+  margin-left: -40px;
+  margin-right: -40px;
+  z-index: 10;
+}
