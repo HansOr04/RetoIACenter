@@ -1,84 +1,165 @@
-# Estrategia de Pruebas
+# Estrategia de pruebas
 
-## Índice
-
-1. [Pirámide de testing](#1-pirámide-de-testing)
-2. [Pruebas unitarias — Backend (JUnit 5)](#2-pruebas-unitarias--backend)
-3. [Pruebas unitarias — Frontend (Jest + RTL)](#3-pruebas-unitarias--frontend)
-4. [Pruebas de integración (Karate DSL)](#4-pruebas-de-integración-karate-dsl)
-5. [Pruebas E2E — 3 flujos críticos (Playwright)](#5-pruebas-e2e--3-flujos-críticos)
-6. [Pruebas de performance (k6 — opcional)](#6-pruebas-de-performance-k6)
-
----
+> Cómo se asegura la calidad del cotizador. Qué se prueba, a qué nivel, con qué herramientas, y por qué.
 
 ## 1. Pirámide de testing
 
-> TODO: insertar diagrama de la pirámide con conteos de tests por nivel
+Seguimos una pirámide clásica adaptada al contexto del reto:
 
 ```
-           /‾‾‾‾‾‾‾‾‾\
-          /    E2E    \        3 flujos · Playwright
-         /─────────────\
-        / Integración   \      N escenarios · Karate DSL
-       /─────────────────\
-      /    Unitarias      \    ≥80% cobertura · JUnit 5 + Jest
-     /─────────────────────\
+          ╱╲
+         ╱E2E╲          3 flujos Playwright       (alta confianza,
+        ╱─────╲                                     baja velocidad)
+       ╱ Integ. ╲       5 features Karate          (media)
+      ╱─────────╲
+     ╱  Unit     ╲      18+ tests JUnit + Jest      (alta velocidad,
+    ╱─────────────╲                                  baja confianza)
 ```
 
----
+**Regla general:** si una regla de negocio se puede probar con un unit test, no subir a integration. Si se puede probar con integration, no subir a E2E.
 
-## 2. Pruebas unitarias — Backend
+## 2. Tests unitarios
 
-> TODO: completar con clases de prueba por HU
+### Backend · JUnit 5 + Mockito
 
-### Cobertura objetivo: 80% líneas (JaCoCo)
-### Ubicación: `apps/api/src/test/java/com/sofka/cotizador/`
-### Casos por HU: ver tabla en README principal
+**Alcance:** use cases, servicios de dominio, validadores, mappers.
 
----
+**Herramientas:** JUnit 5, Mockito, AssertJ, Testcontainers (para tests que necesitan BD real).
 
-## 3. Pruebas unitarias — Frontend
+**Cobertura mínima:** 80% de líneas (enforced por JaCoCo plugin).
 
-> TODO: completar con componentes y hooks a probar
+**Ubicación:** `apps/api/src/test/java/com/sofka/cotizador/`
 
-### Cobertura objetivo: 80% statements (Jest)
-### Ubicación: `apps/web/__tests__/`
+**Ejecutar:** `cd apps/api && ./mvnw test`
 
----
+**Reporte:** `apps/api/target/site/jacoco/index.html`
 
-## 4. Pruebas de integración (Karate DSL)
+### Frontend · Jest + React Testing Library
 
-> TODO: completar con feature files por endpoint
+**Alcance:** componentes UI reutilizables, hooks con lógica, utilidades puras.
 
-### Ubicación: `tests/integration/src/test/java/features/`
-### Ejecución: `cd tests/integration && mvn test`
+**Herramientas:** Jest 29, Testing Library, user-event, SWC transform.
 
----
+**Cobertura:** al menos 50% global, 70% en componentes testeados.
 
-## 5. Pruebas E2E — 3 flujos críticos
+**Ubicación:** `apps/web/src/**/__tests__/`
 
-> TODO: completar con pasos detallados por flujo
+**Ejecutar:** `cd apps/web && pnpm test:coverage`
 
-### Flujo 1: Creación de folio y datos generales
-- HUs: HU-001, HU-002, HU-F01, HU-F02
-- Archivo: `tests/e2e/tests/flujo1-crear-folio.spec.ts`
+## 3. Tests de integración · Karate DSL
 
-### Flujo 2: Agregar ubicación y seleccionar coberturas
-- HUs: HU-004, HU-006, HU-F04, HU-F05
-- Archivo: `tests/e2e/tests/flujo2-ubicaciones-coberturas.spec.ts`
+**Alcance:** contratos HTTP del backend. Validan que los endpoints responden correctamente a requests reales sin UI.
 
-### Flujo 3: Calcular prima y cambiar estado
-- HUs: HU-007, HU-008, HU-F06
-- Archivo: `tests/e2e/tests/flujo3-calcular-prima.spec.ts`
+**Por qué Karate:** sintaxis Gherkin legible, no requiere Java boilerplate, maneja JSON naturalmente.
 
----
+**Features implementados:**
+- `crear-folio.feature` — HU-001 (3 scenarios)
+- `datos-generales.feature` — HU-002 (5 scenarios)
+- `ubicaciones.feature` — HU-004 (4 scenarios)
+- `cobertura.feature` — HU-006 (3 scenarios)
+- `calculo.feature` — HU-007 (3 scenarios)
 
-## 6. Pruebas de performance (k6)
+**Ubicación:** `tests/integration/src/test/java/features/`
 
-> TODO: definir SLAs y umbrales de alerta
+**Ejecutar:** `cd tests/integration && mvn test` (requiere el stack docker arriba)
 
-### Script: `tests/performance/calculate_load.js`
-### Ejecución: `k6 run tests/performance/calculate_load.js`
-### SLAs objetivo:
-- p95 latencia: < 2000 ms
-- Tasa de error: < 5%
+**Reporte:** `tests/integration/target/karate-reports/karate-summary.html`
+
+## 4. Tests E2E · Playwright
+
+**Alcance:** flujos completos de usuario a través de la interfaz web. Validan integración real de las 3 aplicaciones.
+
+### Los 3 flujos obligatorios con justificación
+
+**Flujo 1 · Happy path completo del cotizador**
+
+> Cubre el escenario de aceptación oficial del reto (página 14 del documento funcional). Sin este flujo no se puede afirmar que el sistema cumpla su propósito. Es el único que valida integración REAL entre las 3 aplicaciones y la persistencia.
+
+**Flujo 2 · Ubicación incompleta no bloquea cálculo**
+
+> Valida la regla de negocio más delicada: "si una ubicación está incompleta, esta ubicación genera alerta, pero no debe impedir calcular las demás". Sin este test un refactor del cálculo puede romper silenciosamente el requisito, con impacto de negocio.
+
+**Flujo 3 · Versionado optimista en edición**
+
+> El reto exige "manejo versionado optimista en operaciones de edición". En producción, dos operadores pueden editar simultáneamente con impacto financiero real. Este test valida que el backend detecta y rechaza el conflicto con 409.
+
+**Ubicación:** `tests/e2e/tests/`
+
+**Ejecutar:**
+```bash
+docker compose up -d
+cd tests/e2e
+pnpm exec playwright test
+```
+
+**Reporte:** `tests/e2e/playwright-report/index.html`
+
+## 5. Tests de performance (opcional) · k6
+
+Un script ligero que carga `POST /quotes/{folio}/calculate` con 50 VUs durante 30 segundos. El objetivo es demostrar que el cálculo mantiene p95 < 500ms bajo carga moderada.
+
+**Ubicación:** `tests/performance/calculate_load.js`
+
+**Ejecutar:**
+```bash
+k6 run tests/performance/calculate_load.js
+```
+
+**No es entregable obligatorio** pero suma en criterio 6 si está ejecutado y documentado.
+
+## 6. Matriz de cobertura HU → tipo de test
+
+| HU | Unit | Integration | E2E |
+|---|---|---|---|
+| HU-001 Crear folio | ✅ | ✅ | ✅ |
+| HU-002 Datos generales | ✅ | ✅ | (indirecto en flujo 1) |
+| HU-003 Layout | ✅ | (via helper Karate) | (indirecto) |
+| HU-004 CRUD ubicaciones | ✅ | ✅ | ✅ |
+| HU-005 Edición parcial | ✅ | (cubrir si queda tiempo) | - |
+| HU-006 Cobertura | ✅ | ✅ | (indirecto) |
+| HU-007 Cálculo | ✅ (crítico) | ✅ | ✅ |
+| HU-008 Estado | ✅ | - | (indirecto) |
+| HU-009 Versionado | ✅ | ✅ | ✅ |
+| HU-010 Incompletas | ✅ | ✅ | ✅ (flujo 2 dedicado) |
+
+## 7. Continuous integration
+
+`.gitlab-ci.yml` ejecuta en cada push:
+- Stage `build` — compilación del backend y frontend
+- Stage `test` — tests unitarios de ambos
+- Stage `coverage` — publicación de reporte JaCoCo
+
+Los tests de integración Karate y E2E Playwright **no corren en CI** por simplicidad; se ejecutan localmente antes de push significativos y se adjuntan screenshots/reportes al PR cuando aplique.
+
+## 8. Datos de prueba
+
+### Backend
+- Testcontainers levanta Postgres efímero por clase de test que requiere BD
+- Los catálogos se pueblan con los seeders de Flyway
+
+### Frontend
+- Mocks de fetch con Jest para hooks
+- Fixtures en `tests/e2e/fixtures/test-data.ts` para Playwright
+
+### Integration
+- Karate levanta sus propios folios por scenario (idempotency key aleatoria)
+- Helpers reusables en `tests/integration/src/test/java/features/helpers/`
+
+## 9. Comandos rápidos
+
+```bash
+# Todo el backend
+cd apps/api && ./mvnw verify
+
+# Todo el frontend
+cd apps/web && pnpm test:coverage
+
+# Karate integration (requiere stack arriba)
+docker compose up -d && cd tests/integration && mvn test
+
+# E2E Playwright (requiere stack arriba)
+docker compose up -d && cd tests/e2e && pnpm exec playwright test
+
+# Todo junto
+make test-all   # si existe un Makefile
+```
