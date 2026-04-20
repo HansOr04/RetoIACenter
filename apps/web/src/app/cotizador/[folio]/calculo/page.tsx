@@ -78,8 +78,8 @@ export default function CalculoPage() {
     setLoading(true);
     setError('');
     try {
-      const estado = await foliosApi.getEstado(folio) as { version: number };
-      const res = await quotesApi.calcular(folio, estado.version);
+      const { version } = await quotesApi.getCoberturas(folio) as { version: number };
+      const res = await quotesApi.calcular(folio, version);
       setResult(res as CalculoResult);
     } catch (err: unknown) {
       const e = err as { detail?: string; status?: number; primasPorUbicacion?: any };
