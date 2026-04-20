@@ -1,0 +1,50 @@
+export const testData = {
+  folio: {
+    tipoNegocio: 'COMERCIAL',
+    codigoAgente: 'AG-001',
+  },
+  datosGenerales: {
+    nombreTomador: 'Empresa Auditoría SA',
+    rucCedula: '1792146739001',
+    correoElectronico: 'contacto@auditoria.com',
+    telefonoContacto: '0991234567',
+    tipoInmueble: 'EDIFICIO',
+    usoPrincipal: 'COMERCIAL',
+    anoConstruccion: '2015',
+    numeroPisos: '3'
+  },
+  ubicacionCompleta: {
+    nombreUbicacion: 'Bodega Norte',
+    direccion: 'Av. 6 de Diciembre N34-123',
+    codigoPostal: '170103',
+    estado: 'Pichincha',
+    municipio: 'Quito',
+    colonia: 'La Carolina',
+    ciudad: 'Quito',
+    tipoConstructivo: 'CONCRETO_ARMADO',
+    nivel: 3,
+    anioConstruccion: 2015,
+    giro: 'G-4521',
+    claveIncendio: 'B1',
+    garantias: ['EXTINTORES', 'DETECTORES_HUMO'],
+  },
+  ubicacionIncompleta: {
+    nombreUbicacion: 'Oficina Sur',
+    direccion: 'Av. Colon E4-123',
+    codigoPostal: '170109',
+    estado: 'Pichincha',
+    municipio: 'Quito',
+    ciudad: 'Quito',
+    tipoConstructivo: 'CONCRETO_ARMADO',
+    nivel: 2,
+    giro: 'G-4522',
+    // Nota: sin claveIncendio, debe generar alerta bloqueante
+  },
+  coberturas: {
+    incendioEdificios: true,
+    incendioContenidos: true,
+    catTev: true,
+    remocionEscombros: true,
+    bi: true,
+  },
+};

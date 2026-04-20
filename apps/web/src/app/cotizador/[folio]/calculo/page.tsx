@@ -272,7 +272,7 @@ function ResultadoCalculo({
       <div className="grid grid-cols-1 md:grid-cols-3" style={{ gap: '16px', marginBottom: '40px' }}>
         <Card variant="accent" style={{ padding: '24px' }}>
           <p className="metric-label" style={{ color: 'var(--accent)' }}>Prima neta</p>
-          <p className="metric-value metric-value-accent mono-display">{formatCurrency(primaNeta)}</p>
+          <p data-testid="prima-neta" className="metric-value metric-value-accent mono-display">{formatCurrency(primaNeta)}</p>
           <p style={{ fontSize: '0.75rem', color: 'var(--accent-dim)', marginTop: '8px', lineHeight: 1.4 }}>
             Suma exacta de las tasas de riesgo multiplicadas por los valores asegurados. Excluye impuestos y gastos operativos.
           </p>
@@ -294,7 +294,7 @@ function ResultadoCalculo({
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <h3 className="metric-label" style={{ marginBottom: '8px' }}>Desglose paramétrico por ubicación</h3>
           {primasPorUbicacion.map(pu => (
-            <div key={pu.indice} style={{
+            <div key={pu.indice} data-testid={`ubicacion-${pu.indice}`} style={{
               border: `1px solid ${pu.calculada ? 'var(--border)' : 'rgba(240, 68, 71, 0.25)'}`,
               backgroundColor: 'var(--surface)',
               borderRadius: '8px',

@@ -100,6 +100,7 @@ export default function DatosGeneralesPage() {
   function fieldProps(key: keyof FormState) {
     return {
       id: key,
+      name: key,
       value: form[key],
       onChange: (e: { target: { value: string } }) => setForm(f => ({ ...f, [key]: e.target.value })),
     };
