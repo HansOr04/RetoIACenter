@@ -14,6 +14,10 @@ import com.sofka.cotizador.interfaces.rest.dto.UbicacionPatchRequest;
 import com.sofka.cotizador.interfaces.rest.dto.UbicacionRequest;
 import com.sofka.cotizador.interfaces.rest.dto.UbicacionResponse;
 import com.sofka.cotizador.interfaces.rest.dto.ZonaCatastroficaData;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +35,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/quotes")
+@Tag(name = "Ubicaciones", description = "CRUD de ubicaciones asegurables del folio")
 public class LocationsController {
 
     private static final Logger log = LoggerFactory.getLogger(LocationsController.class);
@@ -51,6 +56,11 @@ public class LocationsController {
     }
 
     @PutMapping("/{folio}/locations")
+    @Operation(summary = "Registrar ubicación", description = "Añade o reemplaza una ubicación asegurable en el folio")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Ubicación registrada"),
+        @ApiResponse(responseCode = "409", description = "Conflicto de versión (If-Match incorrecto)")
+    })
     public ResponseEntity<UbicacionResponse> registrarUbicacion(
             @PathVariable String folio,
             @RequestHeader("If-Match") String ifMatch,
@@ -71,6 +81,8 @@ public class LocationsController {
     }
 
     @GetMapping("/{folio}/locations")
+    @Operation(summary = "Listar ubicaciones", description = "Retorna todas las ubicaciones del folio con su estado de validación")
+    @ApiResponse(responseCode = "200", description = "Lista de ubicaciones")
     public ResponseEntity<List<UbicacionResponse>> listarUbicaciones(
             @PathVariable String folio) {
 
@@ -85,6 +97,8 @@ public class LocationsController {
     }
 
     @GetMapping("/{folio}/locations/summary")
+    @Operation(summary = "Resumen de ubicaciones", description = "Retorna contadores de ubicaciones completas, incompletas y calculables")
+    @ApiResponse(responseCode = "200", description = "Resumen de estado de las ubicaciones")
     public ResponseEntity<ResumenUbicacionesResponse> obtenerResumen(
             @PathVariable String folio) {
 
@@ -110,6 +124,12 @@ public class LocationsController {
     }
 
     @PatchMapping("/{folio}/locations/{indice}")
+    @Operation(summary = "Editar ubicación puntualmente", description = "Actualiza sólo los campos enviados de una ubicación existente")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Ubicación actualizada"),
+        @ApiResponse(responseCode = "404", description = "Ubicación no encontrada"),
+        @ApiResponse(responseCode = "409", description = "Conflicto de versión (If-Match incorrecto)")
+    })
     public ResponseEntity<UbicacionResponse> editarUbicacion(
             @PathVariable String folio,
             @PathVariable int indice,

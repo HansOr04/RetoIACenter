@@ -9,6 +9,10 @@ import com.sofka.cotizador.domain.model.Cotizacion;
 import com.sofka.cotizador.domain.model.OpcionesCobertura;
 import com.sofka.cotizador.interfaces.rest.dto.OpcionesCoberturaRequest;
 import com.sofka.cotizador.interfaces.rest.dto.OpcionesCoberturaResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +26,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/quotes")
+@Tag(name = "Opciones de Cobertura", description = "Selección de coberturas aplicables al folio")
 public class CoverageOptionsController {
 
     private final ConfigurarOpcionesCoberturaUseCase configurarUseCase;
@@ -34,6 +39,11 @@ public class CoverageOptionsController {
     }
 
     @PutMapping("/{folio}/coverage-options")
+    @Operation(summary = "Configurar opciones de cobertura", description = "Define qué coberturas aplican para el cálculo de prima")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Coberturas guardadas"),
+        @ApiResponse(responseCode = "409", description = "Conflicto de versión (If-Match incorrecto)")
+    })
     public ResponseEntity<OpcionesCoberturaResponse> configurar(
             @PathVariable String folio,
             @RequestHeader("If-Match") String ifMatch,
@@ -79,6 +89,8 @@ public class CoverageOptionsController {
     }
 
     @GetMapping("/{folio}/coverage-options")
+    @Operation(summary = "Consultar opciones de cobertura", description = "Retorna las coberturas actualmente seleccionadas para el folio")
+    @ApiResponse(responseCode = "200", description = "Coberturas del folio")
     public ResponseEntity<OpcionesCoberturaResponse> obtener(@PathVariable String folio) {
         ObtenerOpcionesCoberturaUseCase.Result result =
                 obtenerUseCase.ejecutar(new ObtenerOpcionesCoberturaCommand(folio));

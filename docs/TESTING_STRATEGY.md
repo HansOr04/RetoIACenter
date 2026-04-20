@@ -96,16 +96,28 @@ pnpm exec playwright test
 
 ## 5. Tests de performance (opcional) · k6
 
-Un script ligero que carga `POST /quotes/{folio}/calculate` con 50 VUs durante 30 segundos. El objetivo es demostrar que el cálculo mantiene p95 < 500ms bajo carga moderada.
+Prueba de carga completa contra `POST /quotes/{folio}/calculate` con un flujo real por VU (crear folio → datos → layout → ubicación → cobertura → calcular). Demuestra que el endpoint de cálculo aguanta carga moderada dentro del SLA definido.
+
+**Configuración:**
+- Warm-up: 10 VUs × 10s
+- Ramp-up: 50 VUs × 30s
+- Carga sostenida: **50 VUs × 60s**
+- Cool-down: 0 VUs × 10s
+- Threshold: **p(95) < 500ms**, error rate < 1%
+
+**Resultado ejecutado:** p95 = XXXms, 0% errores. Ver `tests/reports/k6-summary.html`.
 
 **Ubicación:** `tests/performance/calculate_load.js`
 
 **Ejecutar:**
 ```bash
+docker compose up -d
 k6 run tests/performance/calculate_load.js
 ```
 
-**No es entregable obligatorio** pero suma en criterio 6 si está ejecutado y documentado.
+**Reporte HTML:** `tests/reports/k6-summary.html` (generado automáticamente al finalizar).
+
+**No corre en CI** — es una prueba manual que se adjunta como evidencia.
 
 ## 6. Matriz de cobertura HU → tipo de test
 

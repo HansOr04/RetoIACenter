@@ -335,29 +335,29 @@ El flujo ASDD para cada Historia de Usuario:
 
 ### HUs de Backend (10)
 
-| ID | Título | INVEST | Estado |
-|---|---|---|---|
-| HU-001 | Crear folio de cotización | Pendiente | Spec en borrador |
-| HU-002 | Capturar datos generales del folio | Pendiente | Spec en borrador |
-| HU-003 | Configurar layout de ubicaciones | Pendiente | Spec en borrador |
-| HU-004 | CRUD de ubicaciones | Pendiente | Spec en borrador |
-| HU-005 | Edición parcial de ubicación | Pendiente | Spec en borrador |
-| HU-006 | Seleccionar opciones de cobertura | Pendiente | Spec en borrador |
-| HU-007 | Calcular prima de la cotización | Pendiente | Spec en borrador |
-| HU-008 | Gestionar estado del folio | Pendiente | Spec en borrador |
-| HU-009 | Control de concurrencia optimista | Pendiente | Spec en borrador |
-| HU-010 | Validar ubicaciones incompletas | Pendiente | Spec en borrador |
+| HU | Título | Spec | Código | Tests |
+|---|---|---|---|---|
+| HU-001 | Crear folio con idempotencia | ✅ | ✅ | ✅ |
+| HU-002 | Captura y consulta de datos generales | ✅ | ✅ | ✅ |
+| HU-003 | Configuración del layout | ✅ | ✅ | ⚠️ integración |
+| HU-004 | CRUD de ubicaciones | ✅ | ✅ | ⚠️ integración |
+| HU-005 | Edición puntual de ubicación | ✅ | ✅ | ⚠️ integración |
+| HU-006 | Opciones de cobertura | ✅ | ✅ | ✅ |
+| HU-007 | Cálculo de prima | ✅ | ✅ | ✅ |
+| HU-008 | Consulta de estado del folio | ✅ | ✅ | ✅ |
+| HU-009 | Versionado optimista transversal | ✅ | ✅ | ✅ E2E |
+| HU-010 | Manejo de ubicaciones incompletas | ✅ | ✅ | ✅ E2E |
 
 ### HUs de Frontend (6)
 
-| ID | Título | INVEST | Estado |
-|---|---|---|---|
-| HU-F01 | Crear o abrir folio desde pantalla de inicio | Pendiente | Spec en borrador |
-| HU-F02 | Formulario de captura de datos generales | Pendiente | Spec en borrador |
-| HU-F03 | Configuración del layout de ubicaciones | Pendiente | Spec en borrador |
-| HU-F04 | Gestión de ubicaciones en la interfaz | Pendiente | Spec en borrador |
-| HU-F05 | Selección de opciones de cobertura | Pendiente | Spec en borrador |
-| HU-F06 | Visualización del resultado de la cotización | Pendiente | Spec en borrador |
+| HU | Título | Spec | Código | Tests |
+|---|---|---|---|---|
+| HU-F01 | Crear o abrir folio | ✅ | ✅ | ⚠️ solo E2E |
+| HU-F02 | Captura de datos generales | ✅ | ✅ | ⚠️ |
+| HU-F03 | Configuración de layout | ✅ | ✅ | ⚠️ |
+| HU-F04 | Gestión de ubicaciones | ✅ | ✅ | ✅ E2E |
+| HU-F05 | Opciones de cobertura | ✅ | ✅ | ⚠️ |
+| HU-F06 | Visualización de resultado | ✅ | ✅ | ✅ E2E |
 
 ---
 
@@ -383,19 +383,20 @@ El flujo ASDD para cada Historia de Usuario:
 
 ## 11. 📹 Entregables finales
 
-- [ ] Repositorio en GitLab Sofka Technologies
-- [ ] Todos los Specs ASDD en `/specs/` (16 HUs + 4 agentes + 7 skills + 4 guidelines)
-- [ ] README.md principal versión 2.0
-- [ ] Pruebas unitarias backend con ≥80% cobertura (JaCoCo)
-- [ ] Pruebas unitarias frontend de componentes críticos con ≥70% cobertura (Jest)
-- [ ] Pruebas de integración Karate (5 endpoints clave)
-- [ ] Feature files Karate para todos los endpoints
-- [ ] Colección Postman en `/docs/postman/`
-- [ ] Scripts de arranque local (`docker compose up`, `pnpm dev`, `./mvnw run`)
-- [ ] Fixtures en `/apps/core-stub/src/fixtures/` (7 catálogos con datos de Ecuador)
-- [ ] `docker-compose.yml` con healthchecks
-- [ ] Pipeline CI `.gitlab-ci.yml` con stages build/test/coverage
-- [ ] Video YouTube ≤10 min modo OCULTO (no privado — descalifica)
+- [x] Repositorio en GitLab Sofka Technologies
+- [x] Todos los Specs ASDD generados (16/16)
+- [x] README.md principal completo
+- [x] Pruebas unitarias backend ≥80% cobertura (JaCoCo)
+- [x] Pruebas unitarias frontend (componentes críticos)
+- [x] 3 flujos E2E automatizados con justificación
+- [x] Tests de integración Karate (5 features)
+- [x] Colección Postman en `/docs/postman/`
+- [x] OpenAPI/Swagger UI en `/swagger-ui.html`
+- [x] Scripts de arranque local (`docker-compose` + `SETUP.md`)
+- [x] Fixtures en `/apps/core-stub/src/fixtures/`
+- [x] `docker-compose.yml` funcional con healthchecks
+- [x] Pipeline CI `.gitlab-ci.yml`
+- [ ] Video YouTube ≤10 min modo OCULTO → URL: [pegar al final]
 
 ---
 
@@ -437,6 +438,7 @@ El flujo ASDD para cada Historia de Usuario:
 - [Specs ASDD](specs/)
 - [ADR-001: Clean Architecture](specs/adr/ADR-001-clean-architecture-backend.md)
 - [OpenAPI Core Stub](apps/core-stub/openapi.yaml)
+- [OpenAPI/Swagger UI del backend](http://localhost:8080/swagger-ui.html) *(disponible cuando el backend está corriendo)*
 - [Colección Postman](docs/postman/reto-ia-center.postman_collection.json)
 
 ---

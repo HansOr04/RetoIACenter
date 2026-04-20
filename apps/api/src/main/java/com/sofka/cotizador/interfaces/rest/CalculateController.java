@@ -11,6 +11,10 @@ import com.sofka.cotizador.domain.model.ubicacion.AlertaBloqueante;
 import com.sofka.cotizador.interfaces.rest.dto.CalculoResponse;
 import com.sofka.cotizador.interfaces.rest.dto.DesgloseData;
 import com.sofka.cotizador.interfaces.rest.dto.PrimaPorUbicacionData;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +26,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/quotes")
+@Tag(name = "Cálculo de Prima", description = "Ejecuta el cálculo actuarial de la cotización")
 public class CalculateController {
 
     private final EjecutarCalculoUseCase ejecutarCalculoUseCase;
@@ -31,6 +36,12 @@ public class CalculateController {
     }
 
     @PostMapping("/{folio}/calculate")
+    @Operation(summary = "Calcular prima de cotización", description = "Ejecuta el motor actuarial sobre las ubicaciones del folio y retorna prima neta y comercial")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Cálculo exitoso con primaNeta y desglose por ubicación"),
+        @ApiResponse(responseCode = "409", description = "Conflicto de versión (If-Match incorrecto)"),
+        @ApiResponse(responseCode = "422", description = "Folio sin ubicaciones válidas para calcular")
+    })
     public ResponseEntity<CalculoResponse> calcular(
             @PathVariable String folio,
             @RequestHeader("If-Match") String ifMatch) {

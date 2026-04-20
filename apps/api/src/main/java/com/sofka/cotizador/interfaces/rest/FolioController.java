@@ -7,6 +7,10 @@ import com.sofka.cotizador.domain.model.LayoutUbicaciones;
 import com.sofka.cotizador.domain.model.ProgresoCotizacion;
 import com.sofka.cotizador.domain.model.SeccionesAplican;
 import com.sofka.cotizador.interfaces.rest.dto.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.slf4j.Logger;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1")
+@Tag(name = "Folios y Cotizaciones", description = "Gestión del ciclo de vida de cotizaciones de daños")
 public class FolioController {
 
     private static final Logger log = LoggerFactory.getLogger(FolioController.class);
@@ -44,6 +49,12 @@ public class FolioController {
     }
 
     @PostMapping("/folios")
+    @Operation(summary = "Crear nuevo folio", description = "Crea un folio en estado BORRADOR con idempotencia via X-Idempotency-Key")
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "Folio creado exitosamente"),
+        @ApiResponse(responseCode = "200", description = "Folio existente retornado (reintento con misma key)"),
+        @ApiResponse(responseCode = "400", description = "Header X-Idempotency-Key ausente")
+    })
     public ResponseEntity<FolioResponse> crearFolio(
             @RequestHeader(IDEMPOTENCY_HEADER) String idempotencyKey,
             @RequestBody(required = false) CrearFolioRequest request) {
@@ -64,6 +75,12 @@ public class FolioController {
     }
 
     @PutMapping("/quotes/{numeroFolio}/general-info")
+    @Operation(summary = "Actualizar datos generales", description = "Guarda o reemplaza los datos generales del tomador del folio")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Datos actualizados"),
+        @ApiResponse(responseCode = "404", description = "Folio no encontrado"),
+        @ApiResponse(responseCode = "409", description = "Conflicto de versión (optimistic locking)")
+    })
     public ResponseEntity<DatosGeneralesResponse> actualizarDatosGenerales(
             @PathVariable String numeroFolio,
             @Valid @RequestBody DatosGeneralesRequest request) {
@@ -78,6 +95,8 @@ public class FolioController {
     }
 
     @GetMapping("/quotes/{numeroFolio}/general-info")
+    @Operation(summary = "Consultar datos generales", description = "Retorna los datos generales del tomador del folio")
+    @ApiResponse(responseCode = "200", description = "Datos generales del folio")
     public ResponseEntity<DatosGeneralesResponse> consultarDatosGenerales(
             @PathVariable String numeroFolio) {
 
@@ -90,6 +109,8 @@ public class FolioController {
     }
 
     @PutMapping("/quotes/{numeroFolio}/locations/layout")
+    @Operation(summary = "Configurar layout de ubicaciones", description = "Define cuántas ubicaciones asegurables tendrá el folio")
+    @ApiResponse(responseCode = "200", description = "Layout actualizado")
     public ResponseEntity<LayoutUbicacionesResponse> actualizarLayout(
             @PathVariable String numeroFolio,
             @Valid @RequestBody LayoutUbicacionesRequest request) {
@@ -111,6 +132,8 @@ public class FolioController {
     }
 
     @GetMapping("/quotes/{numeroFolio}/locations/layout")
+    @Operation(summary = "Consultar layout", description = "Retorna la configuración de ubicaciones del folio")
+    @ApiResponse(responseCode = "200", description = "Layout del folio")
     public ResponseEntity<LayoutUbicacionesResponse> consultarLayout(
             @PathVariable String numeroFolio) {
 
@@ -122,6 +145,8 @@ public class FolioController {
     }
 
     @GetMapping("/quotes/{numeroFolio}/state")
+    @Operation(summary = "Consultar estado del folio", description = "Retorna el estado, versión, progreso y alertas del folio")
+    @ApiResponse(responseCode = "200", description = "Estado actual del folio con progreso de captura")
     public ResponseEntity<EstadoFolioResponse> consultarEstado(
             @PathVariable String numeroFolio) {
 

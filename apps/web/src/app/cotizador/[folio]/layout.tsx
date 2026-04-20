@@ -1,5 +1,5 @@
 'use client';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 const STEPS = [
   { id: 1, label: 'Folio',       sub: 'Crear cotización', path: '' },
@@ -29,8 +29,18 @@ export default function CotizadorLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const pathname = usePathname();
+  const router = useRouter();
   const currentStep = resolveCurrentStep(pathname);
   const folio = extractFolio(pathname);
+
+  const navigateToStep = (step: typeof STEPS[number]) => {
+    if (step.id < currentStep && folio) {
+      const base = `/cotizador/${folio}`;
+      router.push(step.path ? `${base}/${step.path}` : base);
+    }
+  };
+
+  const progressPct = Math.round(((currentStep - 1) / (STEPS.length - 1)) * 100);
 
   return (
     <div className="flex min-h-screen">
@@ -68,13 +78,44 @@ export default function CotizadorLayout({
           )}
         </div>
 
+        {/* Progress bar */}
+        <div style={{ padding: '12px 16px 0' }}>
+          <div
+            role="progressbar"
+            aria-valuenow={progressPct}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Progreso de la cotización"
+            style={{
+              height: '3px',
+              borderRadius: '2px',
+              backgroundColor: 'var(--border)',
+              overflow: 'hidden',
+            }}
+          >
+            <div
+              style={{
+                height: '100%',
+                width: `${progressPct}%`,
+                background: 'linear-gradient(90deg, var(--accent), var(--cream))',
+                transition: 'width 500ms cubic-bezier(0.4,0,0.2,1)',
+                borderRadius: '2px',
+              }}
+            />
+          </div>
+          <p style={{ fontSize: '0.625rem', color: 'var(--muted)', marginTop: '4px', textAlign: 'right' }}>
+            {progressPct}% completado
+          </p>
+        </div>
+
         {/* Steps nav */}
-        <nav style={{ flex: 1, padding: '24px 16px', overflowY: 'auto' }}>
+        <nav style={{ flex: 1, padding: '12px 16px', overflowY: 'auto' }}>
           <ol style={{ position: 'relative', listStyle: 'none', padding: 0, margin: 0 }}>
             {STEPS.map((step, i) => {
               const done = currentStep > step.id;
               const active = currentStep === step.id;
               const isLast = i === STEPS.length - 1;
+              const clickable = done && folio;
 
               return (
                 <li key={step.id} style={{ position: 'relative', display: 'flex', gap: '12px' }}>
@@ -95,31 +136,51 @@ export default function CotizadorLayout({
 
                   {/* Circle */}
                   <div style={{ flexShrink: 0, position: 'relative', zIndex: 1, marginTop: '2px' }}>
-                    <div
-                      className={[
-                        'step-circle',
-                        done ? 'is-done' : '',
-                        active ? 'is-active' : '',
-                      ].filter(Boolean).join(' ')}
+                    <button
+                      onClick={() => navigateToStep(step)}
+                      disabled={!clickable}
+                      title={clickable ? `Volver a: ${step.label}` : step.sub}
+                      aria-current={active ? 'step' : undefined}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        cursor: clickable ? 'pointer' : 'default',
+                      }}
                     >
-                      {done ? (
-                        <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
-                          <path
-                            d="M2 6l3 3 5-5"
-                            stroke="currentColor"
-                            strokeWidth="1.8"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      ) : (
-                        step.id
-                      )}
-                    </div>
+                      <div
+                        className={[
+                          'step-circle',
+                          done ? 'is-done' : '',
+                          active ? 'is-active' : '',
+                        ].filter(Boolean).join(' ')}
+                        style={{
+                          transform: done ? 'scale(1.05)' : 'scale(1)',
+                          transition: 'transform 200ms ease',
+                        }}
+                      >
+                        {done ? (
+                          <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+                            <path
+                              d="M2 6l3 3 5-5"
+                              stroke="currentColor"
+                              strokeWidth="1.8"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        ) : (
+                          step.id
+                        )}
+                      </div>
+                    </button>
                   </div>
 
                   {/* Labels */}
-                  <div style={{ paddingBottom: isLast ? 0 : '28px' }}>
+                  <div
+                    style={{ paddingBottom: isLast ? 0 : '28px', cursor: clickable ? 'pointer' : 'default' }}
+                    onClick={() => navigateToStep(step)}
+                  >
                     <p
                       style={{
                         fontSize: '0.8125rem',

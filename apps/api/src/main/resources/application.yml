@@ -53,3 +53,11 @@ resilience4j:
 logging:
   pattern:
     console: '{"timestamp":"%d{yyyy-MM-dd HH:mm:ss.SSS}","level":"%level","service":"${spring.application.name}","trace":"%X{traceId:-}","message":"%message"}%n'
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+  default-produces-media-type: application/json
