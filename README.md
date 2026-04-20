@@ -257,7 +257,8 @@ cd apps/web && pnpm dev
 
 ### Pruebas unitarias — Backend (JUnit 5 + Mockito + Testcontainers)
 - **Objetivo**: ≥80% cobertura de líneas (JaCoCo)
-- **Comando**: `cd apps/api && ./mvnw test`
+- **Ejecución**: `cd apps/api && ./mvnw clean verify`
+- **Reporte**: [Reporte de JaCoCo Global (≥80%)](apps/api/target/site/jacoco/index.html)
 
 ### Pruebas unitarias — Herramienta: Jest + React Testing Library
 - **Objetivo**: ~50% cobertura global (componentes críticos ≥70%, excluyendo server components)

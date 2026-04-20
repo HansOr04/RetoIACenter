@@ -116,6 +116,74 @@ class EditarUbicacionPuntualUseCaseTest {
         assertThat(resultado.getUbicaciones().get(0).getIndice()).isEqualTo(0);
     }
 
+    @Test
+    void debeLanzarFolioNotFoundCuandoNoExisteFolio() {
+        String folio = "F2026-9999";
+        when(cotizacionRepository.findByNumeroFolio(folio)).thenReturn(Optional.empty());
+
+        EditarUbicacionCommand command = new EditarUbicacionCommand(
+                folio, 0, 1,
+                "Nombre", null, null, null, null, null, null, null
+        );
+
+        assertThatThrownBy(() -> useCase.ejecutar(command))
+                .isInstanceOf(com.sofka.cotizador.domain.exception.FolioNotFoundException.class);
+    }
+
+    @Test
+    void debeActualizarTodosLosCamposYValidarCodigoPostal() {
+        String folio = "F2026-0005";
+        Cotizacion cotizacion = cotizacionConUbicacion(folio, 1);
+
+        when(cotizacionRepository.findByNumeroFolio(folio)).thenReturn(Optional.of(cotizacion));
+        when(cotizacionRepository.save(any(Cotizacion.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        ZonaCatastrofica nuevaZona = new ZonaCatastrofica("TEV-B", "FHM-2");
+        when(validadorCodigoPostalService.validarCodigoPostal("090002"))
+                .thenReturn(Optional.of(nuevaZona));
+
+        EditarUbicacionCommand.GiroCommand giroCmd = new EditarUbicacionCommand.GiroCommand("G002", "Industria", "INC-02");
+        EditarUbicacionCommand command = new EditarUbicacionCommand(
+                folio, 0, 1,
+                null, "Nueva Direccion", "090002", "MADERA", 2, 2020, giroCmd, List.of("INCENDIO", "TERREMOTO")
+        );
+
+        Cotizacion resultado = useCase.ejecutar(command);
+        Ubicacion u = resultado.getUbicaciones().get(0);
+
+        assertThat(u.getDireccion()).isEqualTo("Nueva Direccion");
+        assertThat(u.getCodigoPostal()).isEqualTo("090002");
+        assertThat(u.getTipoConstructivo()).isEqualTo("MADERA");
+        assertThat(u.getNivel()).isEqualTo(2);
+        assertThat(u.getAnioConstruccion()).isEqualTo(2020);
+        assertThat(u.getGiro().codigo()).isEqualTo("G002");
+        assertThat(u.getGarantias()).containsExactly("INCENDIO", "TERREMOTO");
+        assertThat(u.getZonaCatastrofica().zonaTev()).isEqualTo("TEV-B");
+    }
+
+    @Test
+    void debeAsignarNullAZonaCatastroficaSiCodigoPostalNoEsEncontrado() {
+        String folio = "F2026-0006";
+        Cotizacion cotizacion = cotizacionConUbicacion(folio, 1);
+
+        when(cotizacionRepository.findByNumeroFolio(folio)).thenReturn(Optional.of(cotizacion));
+        when(cotizacionRepository.save(any(Cotizacion.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        when(validadorCodigoPostalService.validarCodigoPostal("999999"))
+                .thenReturn(Optional.empty());
+
+        EditarUbicacionCommand command = new EditarUbicacionCommand(
+                folio, 0, 1,
+                null, null, "999999", null, null, null, null, null
+        );
+
+        Cotizacion resultado = useCase.ejecutar(command);
+        Ubicacion u = resultado.getUbicaciones().get(0);
+
+        assertThat(u.getCodigoPostal()).isEqualTo("999999");
+        assertThat(u.getZonaCatastrofica()).isNull();
+    }
+
     private Cotizacion cotizacionConUbicacion(String folio, int version) {
         Ubicacion u = Ubicacion.builder()
                 .indice(0)

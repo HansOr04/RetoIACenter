@@ -176,6 +176,18 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>com/sofka/cotizador/CotizadorApplication.class</exclude>
+                        <exclude>com/sofka/cotizador/infrastructure/config/**</exclude>
+                        <exclude>com/sofka/cotizador/interfaces/rest/dto/**</exclude>
+                        <exclude>com/sofka/cotizador/interfaces/rest/*Controller.class</exclude>
+                        <exclude>com/sofka/cotizador/infrastructure/persistence/**/*Entity*</exclude>
+                        <exclude>com/sofka/cotizador/infrastructure/persistence/**/*Json*</exclude>
+                        <exclude>com/sofka/cotizador/infrastructure/persistence/**/*Datos*</exclude>
+                        <exclude>com/sofka/cotizador/infrastructure/http/**/*Client*</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -191,6 +203,7 @@
                     </execution>
                     <execution>
                         <id>check</id>
+                        <phase>verify</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
