@@ -29,7 +29,7 @@ public class CoreZipCodeClient implements ValidadorCodigoPostalService {
         log.info("Validando código postal cp={}", codigoPostal);
         try {
             ZipCodeResponse response = restClient.get()
-                    .uri("/v1/zip-codes/validate?cp={cp}", codigoPostal)
+                    .uri("/v1/zip-codes/{cp}", codigoPostal)
                     .retrieve()
                     .body(ZipCodeResponse.class);
 
@@ -38,7 +38,9 @@ public class CoreZipCodeClient implements ValidadorCodigoPostalService {
                 return Optional.empty();
             }
 
-            return Optional.of(new ZonaCatastrofica(response.zonaTev(), response.zonaFhm()));
+            // Map zonaRiesgoSismo from core-stub to zonaTev required by ValidadorUbicacion
+            String zonaTev = response.zonaRiesgoSismo() != null ? "TEV-" + response.zonaRiesgoSismo() : null;
+            return Optional.of(new ZonaCatastrofica(zonaTev, response.zonaFhm()));
         } catch (HttpClientErrorException.NotFound e) {
             log.warn("Código postal no encontrado cp={}", codigoPostal);
             return Optional.empty();
@@ -53,5 +55,5 @@ public class CoreZipCodeClient implements ValidadorCodigoPostalService {
         return Optional.empty();
     }
 
-    private record ZipCodeResponse(String zonaTev, String zonaFhm) {}
+    private record ZipCodeResponse(String zonaRiesgoSismo, String zonaFhm) {}
 }
