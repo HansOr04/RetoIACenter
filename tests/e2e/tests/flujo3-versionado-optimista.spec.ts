@@ -35,7 +35,7 @@ test.describe('Flujo 3 · Versionado optimista en edición', () => {
     expect(folio.version).toBe(1);
 
     // Cliente A actualiza datos generales con version 1 → version queda en 2
-    const actA = await request.put(`${API_BASE}/folios/${numeroFolio}/datos-generales`, {
+    const actA = await request.put(`${API_BASE}/quotes/${numeroFolio}/general-info`, {
       headers: {
         'If-Match': '1',
         'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ test.describe('Flujo 3 · Versionado optimista en edición', () => {
     expect(bodyA.version).toBe(2);
 
     // Cliente B intenta actualizar con version 1 (desactualizada) → debe recibir 409
-    const actB = await request.put(`${API_BASE}/folios/${numeroFolio}/datos-generales`, {
+    const actB = await request.put(`${API_BASE}/quotes/${numeroFolio}/general-info`, {
       headers: {
         'If-Match': '1', // version obsoleta
         'Content-Type': 'application/json',
@@ -75,7 +75,7 @@ test.describe('Flujo 3 · Versionado optimista en edición', () => {
     expect(errorBody.receivedVersion).toBe(1);
 
     // Verificar que los datos del Cliente A siguen intactos
-    const leer = await request.get(`${API_BASE}/folios/${numeroFolio}/datos-generales`);
+    const leer = await request.get(`${API_BASE}/quotes/${numeroFolio}/general-info`);
     const datos = await leer.json();
     expect(datos.nombreTomador).toBe('Cliente A');
     expect(datos.rucCedula).toBe('1792146739001');
@@ -92,7 +92,7 @@ test.describe('Flujo 3 · Versionado optimista en edición', () => {
     const folio = await crear.json();
 
     // Sin If-Match
-    const sinIfMatch = await request.put(`${API_BASE}/folios/${folio.numeroFolio}/datos-generales`, {
+    const sinIfMatch = await request.put(`${API_BASE}/quotes/${folio.numeroFolio}/general-info`, {
       headers: { 'Content-Type': 'application/json' },
       data: { nombreTomador: 'Test' },
     });

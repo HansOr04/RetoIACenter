@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/folios")
+@RequestMapping("/api/v1")
 public class FolioController {
 
     private static final Logger log = LoggerFactory.getLogger(FolioController.class);
@@ -43,7 +43,7 @@ public class FolioController {
         this.consultarEstadoFolioUseCase = consultarEstadoFolioUseCase;
     }
 
-    @PostMapping
+    @PostMapping("/folios")
     public ResponseEntity<FolioResponse> crearFolio(
             @RequestHeader(IDEMPOTENCY_HEADER) String idempotencyKey,
             @RequestBody(required = false) CrearFolioRequest request) {
@@ -63,12 +63,12 @@ public class FolioController {
         return ResponseEntity.status(status).body(response);
     }
 
-    @PutMapping("/{numeroFolio}/datos-generales")
+    @PutMapping("/quotes/{numeroFolio}/general-info")
     public ResponseEntity<DatosGeneralesResponse> actualizarDatosGenerales(
             @PathVariable String numeroFolio,
             @Valid @RequestBody DatosGeneralesRequest request) {
 
-        log.info("PUT /api/v1/folios/{}/datos-generales", numeroFolio);
+        log.info("PUT /api/v1/quotes/{}/general-info", numeroFolio);
 
         DatosGenerales datos = toDomain(request);
         ActualizarDatosGeneralesCommand command = new ActualizarDatosGeneralesCommand(numeroFolio, datos);
@@ -77,11 +77,11 @@ public class FolioController {
         return ResponseEntity.ok(toDatosGeneralesResponse(folio));
     }
 
-    @GetMapping("/{numeroFolio}/datos-generales")
+    @GetMapping("/quotes/{numeroFolio}/general-info")
     public ResponseEntity<DatosGeneralesResponse> consultarDatosGenerales(
             @PathVariable String numeroFolio) {
 
-        log.info("GET /api/v1/folios/{}/datos-generales", numeroFolio);
+        log.info("GET /api/v1/quotes/{}/general-info", numeroFolio);
 
         ConsultarDatosGeneralesCommand command = new ConsultarDatosGeneralesCommand(numeroFolio);
         Folio folio = consultarDatosGeneralesUseCase.ejecutar(command);
@@ -89,12 +89,12 @@ public class FolioController {
         return ResponseEntity.ok(toDatosGeneralesResponse(folio));
     }
 
-    @PutMapping("/{numeroFolio}/ubicaciones/layout")
+    @PutMapping("/quotes/{numeroFolio}/locations/layout")
     public ResponseEntity<LayoutUbicacionesResponse> actualizarLayout(
             @PathVariable String numeroFolio,
             @Valid @RequestBody LayoutUbicacionesRequest request) {
 
-        log.info("PUT /api/v1/folios/{}/ubicaciones/layout", numeroFolio);
+        log.info("PUT /api/v1/quotes/{}/locations/layout", numeroFolio);
 
         LayoutUbicaciones layout = new LayoutUbicaciones(
                 request.numeroUbicaciones(),
@@ -110,22 +110,22 @@ public class FolioController {
         return ResponseEntity.ok(toLayoutResponse(folio));
     }
 
-    @GetMapping("/{numeroFolio}/ubicaciones/layout")
+    @GetMapping("/quotes/{numeroFolio}/locations/layout")
     public ResponseEntity<LayoutUbicacionesResponse> consultarLayout(
             @PathVariable String numeroFolio) {
 
-        log.info("GET /api/v1/folios/{}/ubicaciones/layout", numeroFolio);
+        log.info("GET /api/v1/quotes/{}/locations/layout", numeroFolio);
 
         ConsultarLayoutCommand command = new ConsultarLayoutCommand(numeroFolio);
         Folio folio = consultarLayoutUseCase.ejecutar(command);
         return ResponseEntity.ok(toLayoutResponse(folio));
     }
 
-    @GetMapping("/{numeroFolio}/estado")
+    @GetMapping("/quotes/{numeroFolio}/state")
     public ResponseEntity<EstadoFolioResponse> consultarEstado(
             @PathVariable String numeroFolio) {
 
-        log.info("Consultando estado folio: {}", numeroFolio);
+        log.info("GET /api/v1/quotes/{}/state", numeroFolio);
 
         EstadoFolioResult result = consultarEstadoFolioUseCase.ejecutar(
                 new ConsultarEstadoFolioCommand(numeroFolio));

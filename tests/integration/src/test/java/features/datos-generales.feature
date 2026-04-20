@@ -7,7 +7,7 @@ Feature: HU-002 · Captura y consulta de datos generales
     * def versionInicial = folioResp.version
 
   Scenario: PUT con datos válidos actualiza y retorna version incrementada
-    Given path 'folios', folio, 'datos-generales'
+    Given path 'quotes', folio, 'general-info'
     And header If-Match = versionInicial
     And request
       """
@@ -27,21 +27,21 @@ Feature: HU-002 · Captura y consulta de datos generales
     * def version = versionInicial
 
     # Primero PUT
-    Given path 'folios', folio, 'datos-generales'
+    Given path 'quotes', folio, 'general-info'
     And header If-Match = version
     And request { razonSocial: 'Test SA', ruc: '1234567890', clasificacionRiesgo: 'MEDIO' }
     When method PUT
     Then status 200
 
     # Luego GET
-    Given path 'folios', folio, 'datos-generales'
+    Given path 'quotes', folio, 'general-info'
     When method GET
     Then status 200
     And match response.razonSocial == 'Test SA'
     And match response.ruc == '1234567890'
 
   Scenario: PUT con version obsoleta retorna 409
-    Given path 'folios', folio, 'datos-generales'
+    Given path 'quotes', folio, 'general-info'
     And header If-Match = '0'
     And request { razonSocial: 'Test', ruc: '123', clasificacionRiesgo: 'BAJO' }
     When method PUT
@@ -49,12 +49,12 @@ Feature: HU-002 · Captura y consulta de datos generales
     And match response.type contains 'version'
 
   Scenario: PUT sin If-Match retorna 428
-    Given path 'folios', folio, 'datos-generales'
+    Given path 'quotes', folio, 'general-info'
     And request { razonSocial: 'Test', ruc: '123', clasificacionRiesgo: 'BAJO' }
     When method PUT
     Then status 428
 
   Scenario: Folio inexistente retorna 404
-    Given path 'folios', 'F9999-99999', 'datos-generales'
+    Given path 'quotes', 'F9999-99999', 'general-info'
     When method GET
     Then status 404

@@ -101,14 +101,14 @@ curl -X POST http://localhost:8080/api/v1/folios \
 
 ## 2. Consultar datos generales
 
-`GET /api/v1/folios/{numeroFolio}/datos-generales`
+`GET /api/v1/quotes/{numeroFolio}/general-info`
 
 Consulta los datos generales de un folio específico.
 
 ### Request
 
 ```http
-GET /api/v1/folios/{numeroFolio}/datos-generales
+GET /api/v1/quotes/{numeroFolio}/general-info
 ```
 
 ### Response 200 OK
@@ -140,7 +140,7 @@ Si el folio no existe.
 ### Ejemplo curl
 
 ```bash
-curl -X GET http://localhost:8080/api/v1/folios/F2026-1473/datos-generales \
+curl -X GET http://localhost:8080/api/v1/quotes/F2026-1473/general-info \
   -H "Accept: application/json"
 ```
 
@@ -148,14 +148,14 @@ curl -X GET http://localhost:8080/api/v1/folios/F2026-1473/datos-generales \
 
 ## 3. Actualizar datos generales
 
-`PUT /api/v1/folios/{numeroFolio}/datos-generales`
+`PUT /api/v1/quotes/{numeroFolio}/general-info`
 
 Actualiza los datos generales de un folio específico.
 
 ### Request
 
 ```http
-PUT /api/v1/folios/{numeroFolio}/datos-generales
+PUT /api/v1/quotes/{numeroFolio}/general-info
 Content-Type: application/json
 ```
 
@@ -206,7 +206,7 @@ Si el folio no existe.
 ### Ejemplo curl
 
 ```bash
-curl -X PUT http://localhost:8080/api/v1/folios/F2026-1473/datos-generales \
+curl -X PUT http://localhost:8080/api/v1/quotes/F2026-1473/general-info \
   -H "Content-Type: application/json" \
   -d '{"nombreTomador":"Empresa XYZ","rucCedula":"123456789","correoElectronico":"a@b.com","telefonoContacto":"1234567890","tipoInmueble":"Casa","usoPrincipal":"Habitacional","anoConstruccion":2000,"numeroPisos":2,"descripcion":"Casa habitacion"}'
 ```
@@ -215,14 +215,14 @@ curl -X PUT http://localhost:8080/api/v1/folios/F2026-1473/datos-generales \
 
 ## 4. Consultar layout de ubicaciones
 
-`GET /api/v1/folios/{numeroFolio}/ubicaciones/layout`
+`GET /api/v1/quotes/{numeroFolio}/locations/layout`
 
 Retorna la configuración estructural (layout) de cuántas ubicaciones y qué secciones aplican.
 
 ### Request
 
 ```http
-GET /api/v1/folios/{numeroFolio}/ubicaciones/layout
+GET /api/v1/quotes/{numeroFolio}/locations/layout
 ```
 
 ### Response 200 OK
@@ -252,7 +252,7 @@ Si el folio no existe.
 ### Ejemplo curl
 
 ```bash
-curl -X GET http://localhost:8080/api/v1/folios/F2026-1473/ubicaciones/layout \
+curl -X GET http://localhost:8080/api/v1/quotes/F2026-1473/locations/layout \
   -H "Accept: application/json"
 ```
 
@@ -260,14 +260,14 @@ curl -X GET http://localhost:8080/api/v1/folios/F2026-1473/ubicaciones/layout \
 
 ## 5. Actualizar layout de ubicaciones
 
-`PUT /api/v1/folios/{numeroFolio}/ubicaciones/layout`
+`PUT /api/v1/quotes/{numeroFolio}/locations/layout`
 
 Actualiza la configuración estructural (layout) de ubicaciones para el cotizador.
 
 ### Request
 
 ```http
-PUT /api/v1/folios/{numeroFolio}/ubicaciones/layout
+PUT /api/v1/quotes/{numeroFolio}/locations/layout
 Content-Type: application/json
 ```
 
@@ -314,7 +314,7 @@ Si el folio no existe.
 ### Ejemplo curl
 
 ```bash
-curl -X PUT http://localhost:8080/api/v1/folios/F2026-1473/ubicaciones/layout \
+curl -X PUT http://localhost:8080/api/v1/quotes/F2026-1473/locations/layout \
   -H "Content-Type: application/json" \
   -d '{"numeroUbicaciones":3,"seccionesAplican":{"direccion":true,"datosTecnicos":true,"giroComercial":true,"garantias":false}}'
 ```
@@ -580,14 +580,14 @@ curl -X GET http://localhost:8080/api/v1/quotes/F2026-1473/locations/summary \
 
 ## 10. Consultar estado del folio
 
-`GET /api/v1/folios/{numeroFolio}/estado`
+`GET /api/v1/quotes/{numeroFolio}/state`
 
 Response incluye `progreso`, `esCalculable`, `alertasBloqueantes`, `estadoCotizacion`, etc.
 
 ### Request
 
 ```http
-GET /api/v1/folios/{numeroFolio}/estado
+GET /api/v1/quotes/{numeroFolio}/state
 ```
 
 ### Response 200 OK
@@ -613,7 +613,7 @@ GET /api/v1/folios/{numeroFolio}/estado
 ### Ejemplo curl
 
 ```bash
-curl -X GET http://localhost:8080/api/v1/folios/F2026-1473/estado \
+curl -X GET http://localhost:8080/api/v1/quotes/F2026-1473/state \
   -H "Accept: application/json"
 ```
 
@@ -827,15 +827,15 @@ curl -X POST http://localhost:8080/api/v1/quotes/F2026-1473/calculate \
 | # | Método | Ruta | Propósito | Headers obligatorios |
 |---|---|---|---|---|
 | 1 | POST | /api/v1/folios | Crear folio | X-Idempotency-Key |
-| 2 | GET | /api/v1/folios/{numeroFolio}/datos-generales | Leer datos generales | - |
-| 3 | PUT | /api/v1/folios/{numeroFolio}/datos-generales | Actualizar datos generales | - (según diseño del controller) |
-| 4 | GET | /api/v1/folios/{numeroFolio}/ubicaciones/layout | Leer layout | - |
-| 5 | PUT | /api/v1/folios/{numeroFolio}/ubicaciones/layout | Actualizar layout | - (según diseño del controller) |
+| 2 | GET | /api/v1/quotes/{folio}/general-info | Leer datos generales | - |
+| 3 | PUT | /api/v1/quotes/{folio}/general-info | Actualizar datos generales | - |
+| 4 | GET | /api/v1/quotes/{folio}/locations/layout | Leer layout | - |
+| 5 | PUT | /api/v1/quotes/{folio}/locations/layout | Actualizar layout | - |
 | 6 | GET | /api/v1/quotes/{folio}/locations | Listar ubicaciones | - |
 | 7 | PUT | /api/v1/quotes/{folio}/locations | Registrar ubicación | If-Match |
 | 8 | PATCH | /api/v1/quotes/{folio}/locations/{indice} | Editar ubicación puntual | If-Match |
 | 9 | GET | /api/v1/quotes/{folio}/locations/summary | Resumen ubicaciones | - |
-| 10 | GET | /api/v1/folios/{numeroFolio}/estado | Consultar estado | - |
+| 10 | GET | /api/v1/quotes/{folio}/state | Consultar estado | - |
 | 11 | GET | /api/v1/quotes/{folio}/coverage-options | Leer cobertura | - |
 | 12 | PUT | /api/v1/quotes/{folio}/coverage-options | Actualizar cobertura | If-Match |
 | 13 | POST | /api/v1/quotes/{folio}/calculate | Ejecutar cálculo | If-Match |

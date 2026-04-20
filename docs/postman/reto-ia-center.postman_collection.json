@@ -1,94 +1,163 @@
 {
   "info": {
     "name": "Reto IA Center · Cotizador de Daños",
-    "description": "Colección de endpoints del backend (plataforma-danos-back) y core-stub.",
-    "version": "1.0.0",
+    "description": "Colección de los 13 endpoints REST del backend (plataforma-danos-back) y core-stub. Todas las rutas usan inglés consistente bajo /api/v1/quotes/{folio}/...",
+    "version": "2.0.0",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "baseUrl",    "value": "http://localhost:8080/api/v1" },
-    { "key": "coreUrl",   "value": "http://localhost:4000/v1" },
-    { "key": "folioId",   "value": "" }
+    { "key": "baseUrl",  "value": "http://localhost:8080/api/v1" },
+    { "key": "coreUrl", "value": "http://localhost:4000/v1" },
+    { "key": "folio",   "value": "" }
   ],
   "item": [
     {
-      "name": "Backend — Folios",
-      "item": [
-        {
-          "name": "POST /folios — Crear folio",
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/folios",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"rfcContratante\": \"SOFK900101XXX\",\n  \"agentId\": \"AGT-001\",\n  \"businessLineId\": \"BL-DANOS\"\n}"
-            }
-          }
-        },
-        {
-          "name": "GET /folios — Listar folios",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/folios"
-          }
-        },
-        {
-          "name": "GET /folios/:id — Obtener folio",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/folios/{{folioId}}"
-          }
-        },
-        {
-          "name": "PUT /folios/:id/datos-generales",
-          "request": {
-            "method": "PUT",
-            "url": "{{baseUrl}}/folios/{{folioId}}/datos-generales",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"rfcContratante\": \"SOFK900101XXX\",\n  \"nombreContratante\": \"Sofka Technologies S.A.S.\",\n  \"agentId\": \"AGT-001\",\n  \"businessLineId\": \"BL-DANOS\",\n  \"version\": 0\n}"
-            }
-          }
-        },
-        {
-          "name": "POST /folios/:id/calcular",
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/folios/{{folioId}}/calcular"
-          }
-        },
-        {
-          "name": "PATCH /folios/:id/estado",
-          "request": {
-            "method": "PATCH",
-            "url": "{{baseUrl}}/folios/{{folioId}}/estado",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"status\": \"EMITIDO\",\n  \"version\": 1\n}"
-            }
-          }
+      "name": "1 · Crear folio",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/folios",
+        "header": [
+          { "key": "Content-Type",      "value": "application/json" },
+          { "key": "X-Idempotency-Key", "value": "demo-{{$timestamp}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tipoNegocio\": \"COMERCIAL\",\n  \"codigoAgente\": \"AG-001\"\n}"
         }
-      ]
+      }
     },
     {
-      "name": "Backend — Ubicaciones",
-      "item": [
-        {
-          "name": "POST /folios/:id/ubicaciones",
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/folios/{{folioId}}/ubicaciones",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"descripcion\": \"Bodega principal\",\n  \"codigoPostal\": \"170101\",\n  \"direccion\": \"Av. Shyris N36-188\",\n  \"tipoConstruccion\": \"SOLIDA\",\n  \"valorConstruccion\": 150000,\n  \"valorContenidos\": 50000\n}"
-            }
-          }
+      "name": "2 · GET general-info",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/quotes/{{folio}}/general-info",
+        "header": []
+      }
+    },
+    {
+      "name": "3 · PUT general-info",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/quotes/{{folio}}/general-info",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "If-Match",     "value": "1" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombreTomador\": \"Empresa XYZ\",\n  \"rucCedula\": \"1792146739001\",\n  \"correoElectronico\": \"contacto@xyz.com\",\n  \"telefonoContacto\": \"5551234567\",\n  \"tipoInmueble\": \"Edificio\",\n  \"usoPrincipal\": \"Oficinas\",\n  \"anoConstruccion\": 2010,\n  \"numeroPisos\": 5,\n  \"descripcion\": \"Sede principal corporativa\"\n}"
         }
-      ]
+      }
+    },
+    {
+      "name": "4 · GET locations/layout",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/quotes/{{folio}}/locations/layout",
+        "header": []
+      }
+    },
+    {
+      "name": "5 · PUT locations/layout",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/quotes/{{folio}}/locations/layout",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "If-Match",     "value": "2" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"numeroUbicaciones\": 2,\n  \"seccionesAplican\": {\n    \"direccion\": true,\n    \"datosTecnicos\": true,\n    \"giroComercial\": true,\n    \"garantias\": true\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "6 · GET locations",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/quotes/{{folio}}/locations",
+        "header": []
+      }
+    },
+    {
+      "name": "7 · PUT locations (registrar ubicacion)",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/quotes/{{folio}}/locations",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "If-Match",     "value": "3" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombreUbicacion\": \"Almacén Norte\",\n  \"direccion\": \"Av. Siempre Viva 123\",\n  \"codigoPostal\": \"01000\",\n  \"estado\": \"CDMX\",\n  \"municipio\": \"Miguel Hidalgo\",\n  \"colonia\": \"Centro\",\n  \"ciudad\": \"CDMX\",\n  \"tipoConstructivo\": \"CONCRETO_ARMADO\",\n  \"nivel\": 1,\n  \"anioConstruccion\": 2010,\n  \"giro\": {\n    \"codigo\": \"G001\",\n    \"descripcion\": \"Venta al por menor\",\n    \"claveIncendio\": \"I04\"\n  },\n  \"garantias\": [\"ALARMAS\", \"EXTINTORES\"]\n}"
+        }
+      }
+    },
+    {
+      "name": "8 · PATCH locations/{indice}",
+      "request": {
+        "method": "PATCH",
+        "url": "{{baseUrl}}/quotes/{{folio}}/locations/0",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "If-Match",     "value": "4" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nivel\": 3,\n  \"garantias\": [\"ALARMAS\", \"HIDRANTES\", \"EXTINTORES\"]\n}"
+        }
+      }
+    },
+    {
+      "name": "9 · GET locations/summary",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/quotes/{{folio}}/locations/summary",
+        "header": []
+      }
+    },
+    {
+      "name": "10 · GET state",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/quotes/{{folio}}/state",
+        "header": []
+      }
+    },
+    {
+      "name": "11 · GET coverage-options",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/quotes/{{folio}}/coverage-options",
+        "header": []
+      }
+    },
+    {
+      "name": "12 · PUT coverage-options",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/quotes/{{folio}}/coverage-options",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "If-Match",     "value": "5" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"incendioEdificios\": true,\n  \"incendioContenidos\": true,\n  \"extensionCobertura\": true,\n  \"catTev\": true,\n  \"catFhm\": false,\n  \"remocionEscombros\": true,\n  \"gastosExtraordinarios\": false,\n  \"perdidaRentas\": true,\n  \"bi\": false,\n  \"equipoElectronico\": false,\n  \"robo\": false,\n  \"dineroValores\": false,\n  \"vidrios\": false,\n  \"anunciosLuminosos\": false\n}"
+        }
+      }
+    },
+    {
+      "name": "13 · POST calculate",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/quotes/{{folio}}/calculate",
+        "header": [
+          { "key": "If-Match", "value": "6" }
+        ]
+      }
     },
     {
       "name": "Core Stub",
@@ -103,7 +172,7 @@
         },
         {
           "name": "GET /zip-codes/:cp",
-          "request": { "method": "GET", "url": "{{coreUrl}}/zip-codes/170101" }
+          "request": { "method": "GET", "url": "{{coreUrl}}/zip-codes/01000" }
         },
         {
           "name": "GET /catalogs/guarantees",

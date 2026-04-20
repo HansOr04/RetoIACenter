@@ -24,17 +24,17 @@ export const foliosApi = {
     }),
 
   getEstado: (folio: string) =>
-    request(`/api/v1/folios/${folio}/estado`),
+    request(`/api/v1/quotes/${folio}/state`),
 
   putDatosGenerales: (folio: string, version: number, data: object) =>
-    request(`/api/v1/folios/${folio}/datos-generales`, {
+    request(`/api/v1/quotes/${folio}/general-info`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'If-Match': String(version) },
       body: JSON.stringify(data),
     }),
 
   putLayout: (folio: string, version: number, data: object) =>
-    request(`/api/v1/folios/${folio}/ubicaciones/layout`, {
+    request(`/api/v1/quotes/${folio}/locations/layout`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'If-Match': String(version) },
       body: JSON.stringify(data),
