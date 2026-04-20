@@ -28,16 +28,16 @@ CREATE TABLE IF NOT EXISTS cotizacion_tarifas_incendio (
 INSERT INTO cotizacion_tarifas_incendio (clave_incendio, tipo_constructivo, tasa_edificios, tasa_contenidos) VALUES
   ('A1', 'CONCRETO_ARMADO', 0.0012, 0.0018),
   ('A1', 'MAMPOSTERIA',     0.0015, 0.0022),
-  ('A1', 'MADERA',          0.0035, 0.0048),
+  ('A1', 'ACERO_ESTRUCTURAL', 0.0035, 0.0048),
   ('B1', 'CONCRETO_ARMADO', 0.0020, 0.0030),
   ('B1', 'MAMPOSTERIA',     0.0025, 0.0036),
-  ('B1', 'MADERA',          0.0055, 0.0075),
+  ('B1', 'ACERO_ESTRUCTURAL', 0.0055, 0.0075),
   ('B2', 'CONCRETO_ARMADO', 0.0028, 0.0042),
   ('B2', 'MAMPOSTERIA',     0.0034, 0.0050),
-  ('B2', 'MADERA',          0.0070, 0.0095),
+  ('B2', 'ACERO_ESTRUCTURAL', 0.0070, 0.0095),
   ('C1', 'CONCRETO_ARMADO', 0.0038, 0.0056),
   ('C1', 'MAMPOSTERIA',     0.0045, 0.0065),
-  ('C1', 'MADERA',          0.0090, 0.0120);
+  ('C1', 'ACERO_ESTRUCTURAL', 0.0090, 0.0120);
 
 CREATE TABLE IF NOT EXISTS cotizacion_tarifas_cat_tev (
   id       SERIAL PRIMARY KEY,

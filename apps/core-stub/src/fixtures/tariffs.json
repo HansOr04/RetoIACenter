@@ -1,11 +1,11 @@
 {
   "incendio": [
-    { "zonaRiesgo": "A", "tipoConstruccion": "SOLIDA",   "tasaBase": 0.0015, "vigenteDesdе": "2026-01-01" },
-    { "zonaRiesgo": "A", "tipoConstruccion": "MIXTA",    "tasaBase": 0.0025, "vigenteDesdе": "2026-01-01" },
-    { "zonaRiesgo": "A", "tipoConstruccion": "MADERA",   "tasaBase": 0.0050, "vigenteDesdе": "2026-01-01" },
-    { "zonaRiesgo": "B", "tipoConstruccion": "SOLIDA",   "tasaBase": 0.0020, "vigenteDesdе": "2026-01-01" },
-    { "zonaRiesgo": "B", "tipoConstruccion": "MIXTA",    "tasaBase": 0.0035, "vigenteDesdе": "2026-01-01" },
-    { "zonaRiesgo": "B", "tipoConstruccion": "MADERA",   "tasaBase": 0.0070, "vigenteDesdе": "2026-01-01" }
+    { "zonaRiesgo": "A", "tipoConstruccion": "CONCRETO_ARMADO",   "tasaBase": 0.0015, "vigenteDesdе": "2026-01-01" },
+    { "zonaRiesgo": "A", "tipoConstruccion": "MAMPOSTERIA",    "tasaBase": 0.0025, "vigenteDesdе": "2026-01-01" },
+    { "zonaRiesgo": "A", "tipoConstruccion": "ACERO_ESTRUCTURAL",   "tasaBase": 0.0050, "vigenteDesdе": "2026-01-01" },
+    { "zonaRiesgo": "B", "tipoConstruccion": "CONCRETO_ARMADO",   "tasaBase": 0.0020, "vigenteDesdе": "2026-01-01" },
+    { "zonaRiesgo": "B", "tipoConstruccion": "MAMPOSTERIA",    "tasaBase": 0.0035, "vigenteDesdе": "2026-01-01" },
+    { "zonaRiesgo": "B", "tipoConstruccion": "ACERO_ESTRUCTURAL",   "tasaBase": 0.0050, "vigenteDesdе": "2026-01-01" }
   ],
   "cat": [
     { "zonaRiesgo": "1", "peril": "SISMO",      "tasaBase": 0.0020, "vigenteDesdе": "2026-01-01" },

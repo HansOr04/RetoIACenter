@@ -58,6 +58,16 @@ public class CalculoPrimaService {
         return new PrimaPorUbicacion(ubicacion.getIndice(), true, total, desglose, List.of());
     }
 
+    /**
+     * Calcula la prima de incendio para edificios.
+     * 
+     * NOTA SOBRE EL CONTRATO DE LOOKUP (W-04): 
+     * El Enum/VO del dominio define tipoConstructivo como: CONCRETO_ARMADO, MAMPOSTERIA, ACERO_ESTRUCTURAL.
+     * Anteriormente, los seeders SQL (V2) venían con valores legados (SOLIDA, MIXTA, MADERA).
+     * Se optó por alinear los seeders con los valores canónicos del dominio (Opción A) en lugar de crear 
+     * un mapper intermedio. Por lo tanto, garantizamos que u.getTipoConstructivo() hace match directo 
+     * en la base de datos con los valores CONCRETO_ARMADO, MAMPOSTERIA, ACERO_ESTRUCTURAL.
+     */
     private BigDecimal calcularIncendioEdificios(Ubicacion u, OpcionesCobertura c,
                                                   CatalogoTarifasRepository cat, BigDecimal va) {
         if (!c.incendioEdificios()) return BigDecimal.ZERO;

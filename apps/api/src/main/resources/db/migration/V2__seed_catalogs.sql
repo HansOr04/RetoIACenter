@@ -10,11 +10,12 @@ INSERT INTO parametros_calculo (clave, valor, descripcion) VALUES
 
 -- ─── Tarifas de incendio ─────────────────────────────────────────────────────
 INSERT INTO tarifas_incendio (zona_riesgo, tipo_construccion, tasa_base) VALUES
-('A', 'SOLIDA',        0.0015),
-('A', 'MIXTA',         0.0025),
-('A', 'MADERA',        0.0050),
-('B', 'SOLIDA',        0.0020),
-('B', 'MIXTA',         0.0035);
+('A', 'CONCRETO_ARMADO',       0.0015),
+('A', 'MAMPOSTERIA',           0.0025),
+('A', 'ACERO_ESTRUCTURAL',     0.0050),
+('B', 'CONCRETO_ARMADO',       0.0020),
+('B', 'MAMPOSTERIA',           0.0035),
+('B', 'ACERO_ESTRUCTURAL',     0.0050);
 
 -- ─── Tarifas de catástrofe ───────────────────────────────────────────────────
 INSERT INTO tarifas_cat (zona_riesgo, peril, tasa_base) VALUES

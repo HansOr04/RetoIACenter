@@ -44,7 +44,7 @@ const emptyUbicacion = (): UbicacionForm => ({
 const TIPOS_CONSTRUCTIVOS = [
   { value: 'CONCRETO_ARMADO', label: 'Concreto Armado' },
   { value: 'MAMPOSTERIA', label: 'Mampostería' },
-  { value: 'MADERA', label: 'Madera' }
+  { value: 'ACERO_ESTRUCTURAL', label: 'Acero Estructural' }
 ];
 
 const CODIGOS_POSTALES = [
