@@ -37,7 +37,7 @@ const emptyUbicacion = (): UbicacionForm => ({
   tipoConstructivo: 'MAMPOSTERIA',
   valorEdificacion: '100000',
   valorContenidos: '50000',
-  giro: { codigo: 'G01', descripcion: 'Comercial', claveIncendio: 'INC-01' },
+  giro: { codigo: 'B1', descripcion: 'Oficinas', claveIncendio: 'B1' },
   garantias: 'INCENDIO, TERREMOTO',
 });
 
