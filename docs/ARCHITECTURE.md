@@ -1,117 +1,250 @@
-# Arquitectura del Sistema
+# Arquitectura del sistema
 
-## Índice
+> Documento de referencia técnica sobre cómo está construido el cotizador de daños: capas, dependencias, patrones y decisiones clave.
 
-1. [Diagrama de contenedores (C4 nivel 2)](#1-diagrama-de-contenedores)
-2. [Arquitectura del backend (Clean Architecture)](#2-arquitectura-del-backend)
-3. [Arquitectura del frontend (Next.js App Router)](#3-arquitectura-del-frontend)
-4. [Modelo de datos](#4-modelo-de-datos)
-5. [Flujo de integración con core-stub](#5-flujo-de-integración-con-core-stub)
+## 1. Visión general
 
----
+El sistema se compone de tres aplicaciones independientes comunicándose por HTTP:
 
-## 1. Diagrama de contenedores
-
-> TODO: insertar diagrama Mermaid o imagen del sistema de contenedores
-
-```mermaid
-C4Container
-  title Cotizador de Daños — Contenedores
-
-  Person(agente, "Agente de Seguros", "Usuario del cotizador")
-
-  Container(web, "Next.js Web App", "Next.js 15, TypeScript", "Interfaz de cotización")
-  Container(api, "Spring Boot API", "Java 21, Spring Boot 3.2", "Lógica de negocio y cálculo")
-  Container(stub, "Core Stub", "Node.js, Express", "Mock del sistema core")
-  ContainerDb(db, "PostgreSQL 16", "Base de datos relacional", "Folios, tarifas, catálogos")
-
-  Rel(agente, web, "Usa", "HTTPS")
-  Rel(web, api, "Consume", "HTTP/REST")
-  Rel(api, db, "Lee/Escribe", "JDBC")
-  Rel(api, stub, "Consulta catálogos", "HTTP/REST")
+```
+┌─────────────────┐     ┌─────────────────────┐     ┌─────────────────┐
+│  cotizador-web  │────▶│ plataforma-danos-back│────▶│plataforma-core-ohs│
+│   (Next.js)     │ REST│   (Spring Boot)     │ REST│  (stub Express)  │
+│   :3000         │     │   :8080             │     │   :4000          │
+└─────────────────┘     └──────────┬──────────┘     └─────────────────┘
+                                   │
+                                   ▼
+                          ┌──────────────────┐
+                          │  PostgreSQL 16   │
+                          │   :5432          │
+                          └──────────────────┘
 ```
 
----
+Todas las aplicaciones se orquestan localmente con `docker compose`.
 
-## 2. Arquitectura del backend
+## 2. Arquitectura del backend (Clean Architecture)
 
-> TODO: describir las 4 capas con diagrama de paquetes y reglas de dependencia
+El backend sigue Clean Architecture con 4 capas concéntricas donde las dependencias apuntan hacia el centro:
 
-### 2.1 Capa Domain
-### 2.2 Capa Application
-### 2.3 Capa Infrastructure
-### 2.4 Capa Interfaces
+```
+                    ┌──────────────────────────────┐
+                    │      interfaces/rest          │  ← capa externa
+                    │  Controllers · DTOs · Handlers │    (HTTP)
+                    └────────────┬─────────────────┘
+                                 ▼
+                    ┌──────────────────────────────┐
+                    │      application/usecase      │
+                    │    Casos de uso orquestan     │
+                    └────────────┬─────────────────┘
+                                 ▼
+                    ┌──────────────────────────────┐
+                    │           domain              │  ← centro
+                    │  model · port · service · ex  │    (lógica pura)
+                    └────────────┬─────────────────┘
+                                 ▲
+                                 │ implementa puertos
+                    ┌────────────┴─────────────────┐
+                    │      infrastructure           │
+                    │  persistence · http · config  │
+                    └──────────────────────────────┘
+```
 
----
+### Responsabilidades por capa
 
-## 3. Arquitectura del frontend
-
-> TODO: describir estructura App Router, gestión de estado con Zustand, fetching con TanStack Query
-
-### 3.1 Estructura de rutas
-### 3.2 Gestión de estado
-### 3.3 Capa de servicios
-
----
-
-## 4. Modelo de datos
-
-> TODO: diagrama ER de las tablas principales
-
-### 4.1 Tabla `folios`
-### 4.2 Tablas de catálogos y tarifas
-
----
-
-## 5. Flujo de integración con core-stub
-
-> TODO: describir qué datos se consultan al core, cuándo y con qué estrategia de resiliencia (Resilience4j)
-
----
-
-## 6. Modelo de versionado optimista
-
-El sistema mantiene dos agregados relacionados con versiones independientes: `Folio.version` y `Cotizacion.version`.
-
-### 6.1 Folio.version
-
-Incrementa en operaciones del **encabezado** de la cotización:
-
-- Creación del folio (HU-001)
-- Actualización de datos generales (HU-002)
-- Configuración del layout de ubicaciones (HU-003)
-
-### 6.2 Cotizacion.version
-
-Incrementa en operaciones de **contenido** de la cotización:
-
-- Registro y edición de ubicaciones (HU-004, HU-005)
-- Configuración de opciones de cobertura (HU-006)
-- Ejecución del cálculo (HU-007)
-
-### 6.3 Justificación de la separación de agregados
-
-Durante el diseño se evaluaron dos opciones:
-
-**Opción A (implementada):** dos agregados DDD con ciclos de vida independientes. El `Folio` representa la identidad de la cotización (datos inmutables una vez establecidos) y la `Cotizacion` representa el estado operacional (alta frecuencia de cambio). Separarlos permite que ediciones masivas sobre ubicaciones no invaliden operaciones concurrentes sobre datos generales.
-
-**Opción B (descartada):** agregado único con una sola `version`. Más simple conceptualmente, pero genera más conflictos de concurrencia: si un agente edita datos generales mientras otro edita una ubicación, ambos chocarían sobre la misma versión.
-
-### 6.4 Contrato del header `If-Match`
-
-Al editar una sección, el cliente debe enviar el `If-Match` correspondiente al agregado que está modificando:
-
-| Endpoint | Agregado | `If-Match` usa |
+| Capa | Clases | Responsabilidad |
 |---|---|---|
-| `GET /quotes/{f}/state` | Folio + Cotizacion | Retorna **ambas** versions |
-| `PUT /quotes/{f}/general-info` | Folio | `Folio.version` |
-| `GET /quotes/{f}/locations/layout` | Folio | — (solo lectura) |
-| `PUT /quotes/{f}/locations/layout` | Folio | `Folio.version` |
-| `PUT /quotes/{f}/locations` | Cotizacion | `Cotizacion.version` |
-| `PATCH /quotes/{f}/locations/{i}` | Cotizacion | `Cotizacion.version` |
-| `PUT /quotes/{f}/coverage-options` | Cotizacion | `Cotizacion.version` |
-| `POST /quotes/{f}/calculate` | Cotizacion | `Cotizacion.version` |
+| `interfaces/rest/` | Controllers, DTOs, ExceptionHandler | Recibir HTTP, mapear a commands, serializar response |
+| `application/usecase/` | `CrearFolioUseCase`, `EjecutarCalculoUseCase`, etc. | Orquestar lógica de negocio, invocar puertos |
+| `domain/model/` | `Cotizacion`, `Folio`, `Ubicacion` | Entidades, value objects, reglas invariantes |
+| `domain/port/` | `CotizacionRepository`, `CatalogoTarifasRepository` | Interfaces que la infra implementa |
+| `domain/service/` | `CalculoPrimaService`, `ValidadorUbicacion` | Lógica compleja que no cabe en una entidad |
+| `infrastructure/persistence/` | JPA repositories, mappers | Implementación de puertos contra Postgres |
+| `infrastructure/http/` | `CoreServiceHttpClient` | Consumo del core-stub con circuit breaker |
+| `infrastructure/config/` | `DomainServicesConfig`, interceptors | Registro de beans y configuración cross-cutting |
 
-### 6.5 Responsabilidad del frontend
+### Reglas de dependencia
 
-El frontend (HU-F01 a HU-F06) debe consultar `GET /quotes/{f}/state` al iniciar cada pantalla para obtener la versión correcta antes de cualquier operación de escritura. El endpoint retorna `Folio.version` y `Cotizacion.version` en el body, lo que permite al cliente construir el header `If-Match` correcto según la sección que va a editar.
+- Domain no importa nada de application, infrastructure ni interfaces
+- Application no importa nada de infrastructure ni interfaces
+- Infrastructure importa domain (implementa puertos)
+- Interfaces importa application (invoca use cases)
+
+Esto se verifica automáticamente ejecutando:
+
+```bash
+grep -rn "import com.sofka.cotizador.infrastructure" src/main/java/com/sofka/cotizador/domain/
+# Resultado esperado: vacío
+```
+
+## 3. Persistencia
+
+### Estrategia de modelo de datos
+
+Dos tablas principales:
+
+**`folios`** — identidad inmutable
+- `numero_folio` (PK) generado secuencialmente por core-stub
+- `idempotency_key` (UNIQUE) para deduplicación
+- Metadatos de creación
+
+**`cotizaciones`** — estado operacional
+- `numero_folio` (FK → folios)
+- `datos` JSONB con `datosAsegurado`, `ubicaciones[]`, `opcionesCobertura`, `primasPorUbicacion[]`
+- `prima_neta`, `prima_comercial` como columnas dedicadas (para consultas analíticas futuras)
+- `version` INT para optimistic locking
+- `fecha_ultima_actualizacion` TIMESTAMP
+
+### Por qué JSONB para ubicaciones y cobertura
+
+Las ubicaciones tienen estructura variable (algunas con claveIncendio, otras con equipoElectronico, distintos sets de garantías). Modelarlas como tablas hijas requeriría 8-10 tablas adicionales y JOIN complejos para cada query. JSONB permite:
+
+- Escritura parcial atómica con `jsonb_set(datos, '{ubicaciones,N}', nuevoValor)`
+- Queries con índices GIN para filtros comunes
+- Evolución del esquema sin migraciones
+
+Trade-off: perdemos foreign keys estrictas sobre elementos del array. Aceptable para un reto de 2 semanas.
+
+### Migraciones
+
+Flyway gestiona 2 migraciones:
+- `V1__initial_schema.sql` — DDL completo
+- `V2__seed_catalogs.sql` — datos de tarifas, zonas, factores
+
+## 4. Arquitectura del frontend
+
+Next.js 15 con App Router. Estructura clave:
+
+```
+src/
+├── app/                          # Páginas (App Router)
+│   ├── page.tsx                  # Home
+│   └── cotizador/[folio]/...     # Rutas dinámicas del flujo
+├── components/                   # Componentes reutilizables
+│   ├── ui/                       # Primitivos (Button, Input, Card)
+│   ├── forms/                    # Formularios compuestos
+│   └── cotizacion/               # Componentes de dominio
+├── hooks/                        # Custom hooks (useFolio, useCalculation)
+├── stores/                       # Zustand stores
+├── services/api/                 # Cliente HTTP hacia backend
+└── lib/schemas/                  # Esquemas Zod de validación
+```
+
+### Patrón de data fetching
+
+TanStack Query maneja caché, retry, invalidación. Cada endpoint del backend tiene un hook correspondiente en `src/hooks/`:
+
+- `useFolio(folio)` → GET /quotes/{folio}/state
+- `useCreateFolio()` → POST /quotes con optimistic update
+- `useUpdateGeneralInfo(folio)` → PUT con invalidación del cache
+
+### Validación
+
+Zod schemas en `src/lib/schemas/` + React Hook Form para validación client-side. Los mismos schemas se podrían compartir con el backend si se migrara a TypeScript, pero hoy son independientes.
+
+## 5. Comunicación con el core-stub
+
+El backend consume el core-stub mediante `CoreServiceHttpClient` con:
+
+- Resilience4j circuit breaker (abre tras 50% de fallos en 10 requests)
+- Timeout por request: 3 segundos
+- Retry automático: 2 intentos
+- Fallback local cuando el circuit breaker está abierto (respuesta cacheada o error controlado 503)
+
+Ver `apps/api/src/main/java/com/sofka/cotizador/infrastructure/http/CoreServiceHttpClient.java`.
+
+## 6. Manejo de errores
+
+Formato RFC 7807 `application/problem+json` en todas las respuestas de error. Un `GlobalExceptionHandler` (clase `@RestControllerAdvice`) mapea excepciones de dominio a HTTP:
+
+| Excepción | Código HTTP |
+|---|---|
+| `FolioNotFoundException` | 404 |
+| `VersionConflictException` | 409 |
+| `ValidationException` | 400 |
+| `BusinessRuleException` | 422 |
+| `PreconditionRequiredException` | 428 |
+| `CoreServiceUnavailableException` | 503 |
+
+Todos los ProblemDetail incluyen `type`, `title`, `status`, `detail`, `instance` y campos extendidos relevantes al contexto (ej. `currentVersion`, `receivedVersion` en el 409).
+
+## 7. Modelo de versionado optimista
+
+El sistema mantiene **dos agregados con versiones independientes**: `Folio` y `Cotizacion`.
+
+### Diseño dual
+
+```
+Folio (tabla: folios)
+  └── version: INT  →  controla actualizaciones de datos generales (asegurado, RFC, etc.)
+
+Cotizacion (tabla: cotizaciones)
+  └── version: INT  →  controla actualizaciones de ubicaciones, coberturas y resultados
+```
+
+Esto permite que dos operadores trabajen en paralelo: uno editando datos del asegurado (modifica `Folio`) y otro configurando ubicaciones (modifica `Cotizacion`) sin bloquearse mutuamente.
+
+### Contrato de la cabecera `If-Match`
+
+Cada `PUT` y `PATCH` requiere la cabecera `If-Match` con la versión conocida del cliente:
+
+```http
+PUT /quotes/{folio}/general-info
+If-Match: 3
+Content-Type: application/json
+
+{ "nombreAsegurado": "Empresa S.A.", ... }
+```
+
+Si la versión en BD es distinta a la enviada, el backend responde:
+
+```json
+HTTP/1.1 409 Conflict
+Content-Type: application/problem+json
+
+{
+  "type": "https://cotizador.sofka.com/errors/version-conflict",
+  "title": "Version Conflict",
+  "status": 409,
+  "detail": "Expected version 3 but current is 4",
+  "currentVersion": 4,
+  "receivedVersion": 3
+}
+```
+
+### Flujo de actualización sin conflicto
+
+```
+Cliente            Backend               BD
+  │                   │                  │
+  │  GET /state       │                  │
+  │──────────────────▶│                  │
+  │◀──────────────────│  {version: 4}    │
+  │                   │                  │
+  │  PUT If-Match: 4  │                  │
+  │──────────────────▶│                  │
+  │                   │  UPDATE ... WHERE version=4
+  │                   │─────────────────▶│
+  │                   │◀─────────────────│  1 row updated
+  │◀──────────────────│  200 {version:5} │
+```
+
+### Implementación
+
+Ver `apps/api/src/main/java/com/sofka/cotizador/domain/service/VersioningService.java` para la validación central y `apps/api/src/main/java/com/sofka/cotizador/infrastructure/persistence/CotizacionJpaRepository.java` para la query con `@Modifying` + `@Query` que incluye el WHERE version=:expectedVersion.
+
+## 8. ADRs relacionados
+
+- [ADR-001 · Clean Architecture en el backend](../specs/adr/ADR-001-clean-architecture-backend.md)
+
+## 9. Decisiones arquitectónicas resumidas
+
+| Decisión | Alternativa evaluada | Por qué ganó |
+|---|---|---|
+| Clean Architecture | Arquitectura en capas clásica | Testabilidad y separación dominio/framework |
+| JSONB para ubicaciones | Tablas hijas | Velocidad de iteración en reto corto |
+| Stub Express para core | Mock en Spring | Aislar el core del stack principal |
+| Next.js App Router | Pages Router | Server Components mejoran rendimiento |
+| TanStack Query | SWR / Redux Query | Mejor DX con invalidación |
+| Resilience4j | Hystrix (deprecated) | Estándar actual en Spring |
+| Versionado dual (Folio + Cotizacion) | Versión única global | Edición paralela sin bloqueo innecesario |
+| `@Bean` en `DomainServicesConfig` | `@Service` en dominio | Mantiene el dominio libre de anotaciones Spring |
