@@ -24,6 +24,7 @@ interface UbicacionForm {
   valorEdificacion: string;
   valorContenidos: string;
   giro: GiroForm;
+  garantias: string;
 }
 
 const emptyUbicacion = (): UbicacionForm => ({
@@ -34,9 +35,10 @@ const emptyUbicacion = (): UbicacionForm => ({
   estado: '',
   municipio: '',
   tipoConstructivo: 'MAMPOSTERIA',
-  valorEdificacion: '',
-  valorContenidos: '',
-  giro: { codigo: '', descripcion: '', claveIncendio: '' },
+  valorEdificacion: '100000',
+  valorContenidos: '50000',
+  giro: { codigo: 'G01', descripcion: 'Comercial', claveIncendio: 'INC-01' },
+  garantias: 'INCENDIO, TERREMOTO',
 });
 
 const TIPOS_CONSTRUCTIVOS = ['MAMPOSTERIA', 'CONCRETO', 'ACERO', 'MADERA', 'MIXTO'];
@@ -90,6 +92,7 @@ export default function UbicacionesPage() {
           municipio: u.municipio,
           tipoConstructivo: u.tipoConstructivo,
           giro: u.giro,
+          garantias: u.garantias ? u.garantias.split(',').map(g => g.trim()).filter(Boolean) : [],
         };
         if (u.valorEdificacion || u.valorContenidos) {
           payload.datosTecnicos = {
@@ -256,6 +259,20 @@ export default function UbicacionesPage() {
                     value={u.giro.claveIncendio}
                     onChange={ev => updateGiro(i, 'claveIncendio', ev.target.value)}
                   />
+                </Field>
+              </div>
+              {/* Sección: Otras garantías */}
+              <SectionLabel style={{ marginBottom: '16px', marginTop: '24px' }}>Otras Garantías</SectionLabel>
+              <div className="grid grid-cols-1" style={{ gap: '16px' }}>
+                <Field id={`${p}-garantias`} label="Garantías Tarifables (separadas por coma)" required>
+                  <Input
+                    id={`${p}-garantias`}
+                    required
+                    placeholder="INCENDIO, TERREMOTO"
+                    value={u.garantias}
+                    onChange={ev => updateField(i, 'garantias', ev.target.value)}
+                  />
+                  <p style={{ fontSize: '0.75rem', color: 'var(--muted)', marginTop: '8px' }}>Ingresa al menos una garantía para que la ubicación sea tarifable.</p>
                 </Field>
               </div>
             </Card>

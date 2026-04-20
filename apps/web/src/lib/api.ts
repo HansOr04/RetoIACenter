@@ -62,6 +62,9 @@ export const quotesApi = {
       body: JSON.stringify(data),
     }),
 
+  getCoberturas: (folio: string) =>
+    request(`/api/v1/quotes/${folio}/coverage-options`),
+
   putCoberturas: (folio: string, version: number, data: object) =>
     request(`/api/v1/quotes/${folio}/coverage-options`, {
       method: 'PUT',
