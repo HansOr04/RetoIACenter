@@ -11,7 +11,8 @@
       "Bash(grep -E \"^\\\\\\\\[ERROR\\\\\\\\]\")",
       "Bash(mvn test *)",
       "Bash(docker compose *)",
-      "Bash(xargs grep *)"
+      "Bash(xargs grep *)",
+      "Bash(docker volume *)"
     ]
   }
 }

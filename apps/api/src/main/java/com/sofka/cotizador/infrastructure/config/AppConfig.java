@@ -1,6 +1,5 @@
 package com.sofka.cotizador.infrastructure.config;
 
-import com.sofka.cotizador.domain.service.ValidadorUbicacion;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,10 +14,5 @@ public class AppConfig {
         return RestClient.builder()
                 .baseUrl(baseUrl)
                 .build();
-    }
-
-    @Bean
-    public ValidadorUbicacion validadorUbicacion() {
-        return new ValidadorUbicacion();
     }
 }
