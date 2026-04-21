@@ -39,6 +39,9 @@ export const foliosApi = {
       headers: { 'Content-Type': 'application/json', 'If-Match': String(version) },
       body: JSON.stringify(data),
     }),
+
+  getLayout: (folio: string) =>
+    request(`/api/v1/quotes/${folio}/locations/layout`),
 };
 
 export const quotesApi = {

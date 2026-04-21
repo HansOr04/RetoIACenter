@@ -86,10 +86,10 @@ export default function UbicacionesPage() {
   const [ubicaciones, setUbicaciones] = useState<UbicacionForm[]>([emptyUbicacion()]);
 
   useEffect(() => {
-    foliosApi.getEstado(folio)
-      .then((estado: unknown) => {
-        const s = estado as { ubicacionesLayout?: { numeroUbicaciones?: number } };
-        const n = s.ubicacionesLayout?.numeroUbicaciones ?? 1;
+    foliosApi.getLayout(folio)
+      .then((layout: unknown) => {
+        const l = layout as { numeroUbicaciones?: number };
+        const n = l.numeroUbicaciones ?? 1;
         setUbicaciones(Array.from({ length: n }, () => emptyUbicacion()));
       })
       .catch(() => {});

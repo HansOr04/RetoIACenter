@@ -12,7 +12,9 @@
       "Bash(mvn test *)",
       "Bash(docker compose *)",
       "Bash(xargs grep *)",
-      "Bash(docker volume *)"
+      "Bash(docker volume *)",
+      "Bash(grep -E \"\\\\.\\(py|ts|tsx\\)$\")",
+      "Bash(xargs ls *)"
     ]
   }
 }
