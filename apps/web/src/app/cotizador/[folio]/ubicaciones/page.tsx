@@ -88,8 +88,8 @@ export default function UbicacionesPage() {
   useEffect(() => {
     foliosApi.getLayout(folio)
       .then((layout: unknown) => {
-        const l = layout as { numeroUbicaciones?: number };
-        const n = l.numeroUbicaciones ?? 1;
+        const l = layout as { layoutUbicaciones?: { numeroUbicaciones?: number } };
+        const n = l.layoutUbicaciones?.numeroUbicaciones ?? 1;
         setUbicaciones(Array.from({ length: n }, () => emptyUbicacion()));
       })
       .catch(() => {});
